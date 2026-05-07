@@ -1,0 +1,57 @@
+import type { Metadata } from 'next'
+import { Noto_Serif, Public_Sans } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
+
+const notoSerif = Noto_Serif({ 
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-headline',
+})
+
+const publicSans = Public_Sans({ 
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-body',
+})
+
+export const metadata: Metadata = {
+  title: 'Nestly - Find a place that feels like home',
+  description: 'Discover unique rental properties worldwide with Nestly',
+  generator: 'v0.app',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" className={`${notoSerif.variable} ${publicSans.variable} light`}>
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+      </head>
+      <body className="bg-background text-on-background font-body-md min-h-screen antialiased">
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
+}
