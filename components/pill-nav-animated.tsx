@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
-import { Home, List, HelpCircle, MessageSquare, LogIn, UserPlus } from 'lucide-react';
+import { Home, List, HelpCircle, MessageSquare, LogIn, UserPlus, User } from 'lucide-react';
 import './pill-nav-animated.css';
 
 interface PillNavItem {
@@ -33,20 +33,21 @@ const iconMap = {
   message: MessageSquare,
   login: LogIn,
   'user-plus': UserPlus,
+  user: User,
 };
 
 export function PillNavAnimated({
   items,
   className = '',
   ease = 'power3.easeOut',
-  baseColor = '#FFFAF0',
-  pillColor = '#B31C33',
-  hoveredPillTextColor = '#FFFAF0',
+  baseColor = 'hsl(var(--secondary))',
+  pillColor = 'hsl(var(--primary))',
+  hoveredPillTextColor = 'hsl(var(--primary-foreground))',
   pillTextColor,
   initialLoadAnimation = true
 }: PillNavProps) {
   const pathname = usePathname();
-  const resolvedPillTextColor = pillTextColor ?? '#FFFFFF';
+  const resolvedPillTextColor = pillTextColor ?? 'hsl(var(--primary-foreground))';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const tlRefs = useRef<gsap.core.Timeline[]>([]);

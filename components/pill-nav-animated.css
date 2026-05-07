@@ -85,7 +85,7 @@
 .pill-list > li {
   display: flex;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .pill {
@@ -105,26 +105,29 @@
   white-space: nowrap;
   cursor: pointer;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   transition: all 0.2s ease;
+  isolation: isolate;
+  border: 1px solid transparent;
 }
 
 .pill:hover {
   background: #9a1829;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(179, 28, 51, 0.35);
+  border: 1px solid #B31C33;
   z-index: 10;
 }
 
 .pill-dark {
   background: #1A1A1A;
   color: #FFFFFF;
-  overflow: visible;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 
 .pill-dark:hover {
   background: #000000;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  border: 1px solid #1A1A1A;
   z-index: 10;
 }
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Calendar as CalendarIcon,
   MapPin,
@@ -12,19 +13,23 @@ import {
 import { DatePicker } from "./date-picker";
 
 const popularDestinations = [
-  "New York, NY",
-  "Los Angeles, CA",
-  "Miami, FL",
-  "San Francisco, CA",
-  "Chicago, IL",
-  "Seattle, WA",
-  "Austin, TX",
-  "Boston, MA",
-  "Denver, CO",
-  "Portland, OR",
+  { name: "New York, NY", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=100&h=100&fit=crop" },
+  { name: "Los Angeles, CA", image: "https://images.unsplash.com/photo-1534190239940-9ba8944ea261?w=100&h=100&fit=crop" },
+  { name: "Miami, FL", image: "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?w=100&h=100&fit=crop" },
+  { name: "San Francisco, CA", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=100&h=100&fit=crop" },
+  { name: "Chicago, IL", image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=100&h=100&fit=crop" },
+  { name: "Seattle, WA", image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=100&h=100&fit=crop" },
+  { name: "Austin, TX", image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=100&h=100&fit=crop" },
+  { name: "Boston, MA", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=100&h=100&fit=crop" },
+  { name: "Denver, CO", image: "https://images.unsplash.com/photo-1619856699906-09e1f58c98b1?w=100&h=100&fit=crop" },
+  { name: "Portland, OR", image: "https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?w=100&h=100&fit=crop" },
 ];
 
-export function SearchBar() {
+interface SearchBarProps {
+  variant?: 'hero' | 'compact';
+}
+
+export function SearchBar({ variant = 'hero' }: SearchBarProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -56,17 +61,31 @@ export function SearchBar() {
   }, []);
 
   const handleSearch = () => {
+    const params = new URLSearchParams();
+    
     if (searchQuery.trim()) {
-      router.push(`/listings?search=${encodeURIComponent(searchQuery)}`);
+      params.set('search', searchQuery);
     }
+    
+    if (selectedDate) {
+      params.set('date', selectedDate.toISOString());
+    }
+    
+    if (guests > 1) {
+      params.set('guests', guests.toString());
+    }
+    
+    router.push(`/listings${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  const isCompact = variant === 'compact';
+
   return (
-    <div className="mt-12 w-full max-w-5xl bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch p-3 relative backdrop-blur-sm overflow-visible">
+    <div className={`w-full ${isCompact ? 'max-w-full' : 'max-w-5xl mt-12'} bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch ${isCompact ? 'p-2' : 'p-3'} relative backdrop-blur-sm overflow-visible`}>
       {/* Location */}
       <div className="flex-1 relative overflow-visible" ref={locationRef}>
         <button
@@ -75,9 +94,9 @@ export function SearchBar() {
             setShowDateDropdown(false);
             setShowGuestsDropdown(false);
           }}
-          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
+          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
         >
-          <MapPin className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
+          <MapPin className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-semibold text-foreground">Where</span>
             <span className="text-sm text-muted-foreground truncate">
@@ -103,21 +122,27 @@ export function SearchBar() {
               </p>
               {popularDestinations
                 .filter((dest) =>
-                  !searchQuery || dest.toLowerCase().includes(searchQuery.toLowerCase())
+                  !searchQuery || dest.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .map((destination) => (
                   <button
-                    key={destination}
+                    key={destination.name}
                     onClick={() => {
-                      setSearchQuery(destination);
+                      setSearchQuery(destination.name);
                       setShowLocationDropdown(false);
                     }}
                     className="w-full text-left px-4 py-4 hover:bg-secondary/70 rounded-2xl transition-all flex items-center gap-4 group"
                   >
-                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <MapPin className="h-5 w-5 text-primary" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
+                      <Image
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
                     </div>
-                    <span className="text-base font-medium">{destination}</span>
+                    <span className="text-base font-medium">{destination.name}</span>
                   </button>
                 ))}
             </div>
@@ -135,9 +160,9 @@ export function SearchBar() {
             setShowLocationDropdown(false);
             setShowGuestsDropdown(false);
           }}
-          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
+          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
         >
-          <CalendarIcon className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
+          <CalendarIcon className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-foreground">Dates</span>
             <span className="text-sm text-muted-foreground">
@@ -169,9 +194,9 @@ export function SearchBar() {
             setShowLocationDropdown(false);
             setShowDateDropdown(false);
           }}
-          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
+          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
         >
-          <Search className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
+          <Search className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-foreground">Guests</span>
             <span className="text-sm text-muted-foreground">
@@ -213,9 +238,9 @@ export function SearchBar() {
       {/* Search Button */}
       <button
         onClick={handleSearch}
-        className="bg-primary text-primary-foreground w-14 h-14 rounded-2xl flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all shadow-lg ml-2 self-center group"
+        className={`bg-primary text-primary-foreground ${isCompact ? 'w-12 h-12' : 'w-14 h-14'} rounded-2xl flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all shadow-lg ml-2 self-center group`}
       >
-        <Search className="h-6 w-6 group-hover:scale-110 transition-transform" />
+        <Search className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} group-hover:scale-110 transition-transform`} />
       </button>
     </div>
   );

@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 interface AvatarProps {
   src: string
   name: string
@@ -5,6 +9,8 @@ interface AvatarProps {
 }
 
 export function Avatar({ src, name, size = 'md' }: AvatarProps) {
+  const [imageError, setImageError] = useState(false);
+
   const sizeClasses = {
     sm: 'w-8 h-8 text-xs',
     md: 'w-10 h-10 text-sm',
@@ -20,18 +26,18 @@ export function Avatar({ src, name, size = 'md' }: AvatarProps) {
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-full overflow-hidden flex-center bg-primary text-white font-sans font-bold flex-shrink-0`}
+      className={`${sizeClasses[size]} rounded-full overflow-hidden flex items-center justify-center bg-primary text-primary-foreground font-sans font-bold flex-shrink-0`}
     >
-      <img
-        src={src}
-        alt={name}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-          const target = e.target as HTMLImageElement
-          target.style.display = 'none'
-        }}
-      />
-      <span className="hidden first:inline">{initials}</span>
+      {!imageError ? (
+        <img
+          src={src}
+          alt={name}
+          className="w-full h-full object-cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <span>{initials}</span>
+      )}
     </div>
   )
 }

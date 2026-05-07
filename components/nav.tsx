@@ -1,15 +1,18 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
 import { PillNavAnimated } from "./pill-nav-animated";
 
-export function ConditionalNav() {
-  const pathname = usePathname();
-  const hideNav = pathname === '/signin' || pathname === '/signup';
+export function Nav() {
+  const { user, loading } = useAuth();
 
-  if (hideNav) return null;
-
-  const navItems = [
+  const navItems = user ? [
+    { label: "Home", href: "/", icon: "home" },
+    { label: "Listings", href: "/listings", icon: "list" },
+    { label: "How it Works", href: "/how-it-works", icon: "help" },
+    { label: "Messages", href: "/messages", icon: "message" },
+    { label: user.name, href: "/profile", icon: "user", variant: "dark" as const },
+  ] : [
     { label: "Home", href: "/", icon: "home" },
     { label: "Listings", href: "/listings", icon: "list" },
     { label: "How it Works", href: "/how-it-works", icon: "help" },
@@ -18,13 +21,13 @@ export function ConditionalNav() {
     { label: "Sign Up", href: "/signup", icon: "user-plus", variant: "dark" as const },
   ];
   
+  if (loading) {
+    return null;
+  }
+  
   return (
     <PillNavAnimated
       items={navItems}
-      baseColor="#FFFAF0"
-      pillColor="#B31C33"
-      hoveredPillTextColor="#1A1A1A"
-      pillTextColor="#FFFFFF"
       ease="power2.easeOut"
       initialLoadAnimation={true}
     />

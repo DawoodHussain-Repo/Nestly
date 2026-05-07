@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,12 +22,13 @@ import { Button } from "@/components/ui/button";
 import { Property } from "@/types/property";
 
 interface PropertyDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
+  const { id } = use(params);
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +36,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
     async function fetchProperty() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/listings/${params.id}`);
+        const response = await fetch(`/api/listings/${id}`);
         const data = await response.json();
         if (data.success) {
           setProperty(data.data);
@@ -50,7 +51,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
       }
     }
     fetchProperty();
-  }, [params.id]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -87,7 +88,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
         {/* Property Images */}
         <section className="max-w-7xl mx-auto px-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-2xl overflow-hidden">
-            <div className="relative h-[400px] md:h-[500px]">
+            <div className="relative h-[400px] md:h-[500px] bg-muted">
               <Image
                 src={property.image}
                 alt={property.title}
@@ -95,17 +96,22 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
+                unoptimized
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {(property.images && property.images.length > 0 ? property.images.slice(0, 4) : [property.image, property.image, property.image, property.image]).map((img) => (
-                <div key={img} className="relative h-[190px] md:h-[242px]">
+              {(property.images && property.images.length > 0 
+                ? property.images.slice(0, 4) 
+                : Array(4).fill(property.image)
+              ).map((img, idx) => (
+                <div key={`${img}-${idx}`} className="relative h-[190px] md:h-[242px] bg-muted">
                   <Image
                     src={img}
-                    alt={`${property.title} - Gallery image`}
+                    alt={`${property.title} - Gallery image ${idx + 1}`}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover rounded-xl"
+                    unoptimized
                   />
                 </div>
               ))}

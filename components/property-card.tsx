@@ -43,6 +43,7 @@ export function PropertyCard({
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              unoptimized
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm text-muted-foreground">

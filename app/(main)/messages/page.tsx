@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, ArrowLeft } from "lucide-react";
 import { MessageListItem } from "@/components/message-list-item";
 import { MessageThread } from "@/components/message-thread";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,21 @@ import { mockCurrentUser, mockMessages } from "@/lib/mock-data";
 
 export default function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState(mockMessages[0]?.senderId ?? "");
+  const [showThread, setShowThread] = useState(false);
   const conversationList = mockMessages;
   const selectedMessages = mockMessages.filter(
     (message) => message.senderId === selectedConversation || message.receiverId === selectedConversation
   );
   const activeMessage = conversationList.find((message) => message.senderId === selectedConversation);
+
+  const handleSelectConversation = (senderId: string) => {
+    setSelectedConversation(senderId);
+    setShowThread(true);
+  };
+
+  const handleBackToList = () => {
+    setShowThread(false);
+  };
 
   return (
     <div className="bg-background text-foreground h-screen overflow-hidden flex">
@@ -44,7 +54,8 @@ export default function MessagesPage() {
           </nav>
         </aside>
 
-        <div className="w-full md:w-96 border-r border-border bg-background flex flex-col h-full">
+        {/* Conversation List - Hidden on mobile when thread is shown */}
+        <div className={`w-full md:w-96 border-r border-border bg-background flex flex-col h-full ${showThread ? 'hidden md:flex' : 'flex'}`}>
           <div className="p-5 border-b border-border space-y-3">
             <div className="flex justify-between items-center">
               <h3 className="text-xl font-heading text-foreground">Inbox</h3>
@@ -62,16 +73,26 @@ export default function MessagesPage() {
                 key={conversation.id}
                 message={conversation}
                 isSelected={selectedConversation === conversation.senderId}
-                onClick={() => setSelectedConversation(conversation.senderId)}
+                onClick={() => handleSelectConversation(conversation.senderId)}
               />
             ))}
           </div>
         </div>
 
-        <main className="flex-1 hidden md:flex flex-col h-full bg-background">
-          <header className="px-5 py-4 border-b border-border bg-background">
-            <h2 className="text-lg font-heading text-foreground">{activeMessage?.senderName ?? "Conversation"}</h2>
-            <p className="text-sm text-primary">{activeMessage?.propertyTitle ?? "No property selected"}</p>
+        {/* Message Thread - Shown on mobile when conversation is selected */}
+        <main className={`flex-1 flex flex-col h-full bg-background ${showThread ? 'flex' : 'hidden md:flex'}`}>
+          <header className="px-5 py-4 border-b border-border bg-background flex items-center gap-3">
+            <button
+              onClick={handleBackToList}
+              className="md:hidden p-2 hover:bg-secondary rounded-full transition-colors"
+              aria-label="Back to conversations"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <div className="flex-1">
+              <h2 className="text-lg font-heading text-foreground">{activeMessage?.senderName ?? "Conversation"}</h2>
+              <p className="text-sm text-primary">{activeMessage?.propertyTitle ?? "No property selected"}</p>
+            </div>
           </header>
           <div className="flex-1 min-h-0">
             <MessageThread messages={selectedMessages} currentUserId={mockCurrentUser.id} />

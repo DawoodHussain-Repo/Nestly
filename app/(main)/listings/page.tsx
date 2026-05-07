@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Suspense, useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PROPERTY_TYPES, PRICE_RANGES, UI } from "@/constants";
 import { FormSelect } from "@/components/ui/form-controls";
 import { PropertyCard } from "@/components/property-card";
 import { Container } from "@/components/ui/layout";
 import { Heading, Text } from "@/components/ui/typography";
-import { Input } from "@/components/ui/input";
 import { Property } from "@/types/property";
+import { SearchBar } from "@/components/home/search-bar";
 
-export default function ListingsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [propertyType, setPropertyType] = useState<string>(PROPERTY_TYPES[0] ?? "All Types");
+function ListingsContent() {
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || "");
+  const [propertyType, setPropertyType] = useState<string>(searchParams.get('type') || (PROPERTY_TYPES[0] ?? "All Types"));
   const [priceRange, setPriceRange] = useState<string>(PRICE_RANGES[0] ?? "Price: Any");
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,18 +87,11 @@ export default function ListingsPage() {
               Browse Our Collection
             </Heading>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by location, name, or type..."
-                    className="h-11 rounded-full bg-background border-border pl-10"
-                  />
-                </div>
-              </div>
+            <div className="mb-6">
+              <SearchBar variant="compact" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <FormSelect
                   value={propertyType}
@@ -162,5 +156,20 @@ export default function ListingsPage() {
         </section>
       </main>
     </div>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ListingsContent />
+    </Suspense>
   );
 }

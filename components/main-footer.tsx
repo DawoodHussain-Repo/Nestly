@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import { Footer } from "./footer";
 
-export function ConditionalFooter() {
+export function MainFooter() {
   const pathname = usePathname();
-  const hideFooter = pathname === '/signin' || pathname === '/signup' || pathname === '/messages';
+  const hideFooter = pathname === '/messages';
 
   if (hideFooter) return null;
   
