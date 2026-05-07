@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, MapPin, Star, Bed, Bath, Users } from 'lucide-react'
+import { Heart, MapPin, Star, Bed, Bath, Users, Building2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useState } from 'react'
 
 interface PropertyCardProps {
   property: {
@@ -31,23 +32,28 @@ export function PropertyCard({
 }: PropertyCardProps) {
   const link = href ?? `/listings/${property.id}`
   const compact = variant === 'compact'
+  const [imageError, setImageError] = useState(false)
 
   return (
     <Link href={link}>
       <div className="overflow-hidden group cursor-pointer transition-all hover:shadow-2xl rounded-3xl border border-border bg-background hover:-translate-y-1 duration-300">
         <div className={cn('relative overflow-hidden bg-muted', compact ? 'h-44' : 'h-56')}>
-          {property.image ? (
+          {property.image && !imageError ? (
             <Image
               src={property.image}
               alt={property.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               className="object-cover transition-transform duration-500 group-hover:scale-110"
+              onError={() => setImageError(true)}
               unoptimized
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm text-muted-foreground">
-              Property Image
+            <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+              <div className="text-center">
+                <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Property Image</p>
+              </div>
             </div>
           )}
           <button

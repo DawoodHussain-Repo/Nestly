@@ -29,8 +29,8 @@ interface CategoryBarProps {
 export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarProps) {
   return (
     <div className="relative bg-background border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex gap-8 overflow-x-auto scrollbar-hide items-start">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const active = selectedCategory === cat.id;
@@ -38,16 +38,16 @@ export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarP
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`flex flex-col items-center gap-3 min-w-[80px] transition-all flex-shrink-0 ${
+                className={`flex flex-col items-center gap-3 min-w-[80px] transition-all flex-shrink-0 py-2 ${
                   active
                     ? "opacity-100 text-primary"
                     : "opacity-70 text-muted-foreground hover:opacity-100"
                 }`}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                  active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-secondary/70 hover:bg-secondary hover:scale-105'
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform ${
+                  active ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-secondary/70 hover:bg-secondary'
                 }`}>
-                  <Icon className="h-7 w-7" />
+                  <Icon className={`h-7 w-7 transition-transform ${active ? 'scale-105' : 'hover:scale-105'}`} />
                 </div>
                 <span className="text-xs font-semibold whitespace-nowrap">{cat.name}</span>
               </button>

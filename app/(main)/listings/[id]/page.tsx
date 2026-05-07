@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState, useEffect } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -16,10 +16,13 @@ import {
   Wind,
   ChevronLeft,
   Heart,
-  Share2
+  Share2,
+  Building2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Property } from "@/types/property";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 interface PropertyDetailPageProps {
   params: Promise<{
@@ -29,8 +32,18 @@ interface PropertyDetailPageProps {
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
   const { id } = use(params);
+  const { user } = useAuth();
+  const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [galleryErrors, setGalleryErrors] = useState<Record<number, boolean>>({});
+  
+  // Booking form state
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState(1);
 
   useEffect(() => {
     async function fetchProperty() {
@@ -52,6 +65,87 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
     }
     fetchProperty();
   }, [id]);
+
+  const calculateNights = () => {
+    if (!checkIn || !checkOut) return 0;
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const nights = calculateNights();
+  const totalPrice = property ? property.price * nights : 0;
+  const serviceFee = Math.round(totalPrice * 0.1);
+  const grandTotal = totalPrice + serviceFee;
+
+  const handleReserve = async () => {
+    if (!user) {
+      toast.error("Please sign in to make a reservation");
+      router.push("/signin");
+      return;
+    }
+
+    if (!checkIn || !checkOut) {
+      toast.error("Please select check-in and check-out dates");
+      return;
+    }
+
+    if (nights < 1) {
+      toast.error("Please select valid dates");
+      return;
+    }
+
+    setBookingLoading(true);
+
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          propertyId: id,
+          checkIn,
+          checkOut,
+          guests,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Failed to create booking");
+        return;
+      }
+
+      toast.success(`Booking confirmed! Reference: ${data.booking.bookingReference}`);
+      
+      // Show booking details in a more prominent way
+      setTimeout(() => {
+        toast.success(
+          `Payment completed! Total: $${data.booking.grandTotal}`,
+          { duration: 5000 }
+        );
+      }, 1000);
+
+      // Reset form
+      setCheckIn("");
+      setCheckOut("");
+      setGuests(1);
+
+      // Optionally redirect to bookings page
+      setTimeout(() => {
+        router.push("/profile");
+      }, 3000);
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setBookingLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -89,30 +183,47 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
         <section className="max-w-7xl mx-auto px-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-2xl overflow-hidden">
             <div className="relative h-[400px] md:h-[500px] bg-muted">
-              <Image
-                src={property.image}
-                alt={property.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-                priority
-                unoptimized
-              />
+              {!imageError ? (
+                <Image
+                  src={property.image}
+                  alt={property.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority
+                  onError={() => setImageError(true)}
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                  <div className="text-center">
+                    <Building2 className="h-16 w-16 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Property Image</p>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               {(property.images && property.images.length > 0 
                 ? property.images.slice(0, 4) 
                 : Array(4).fill(property.image)
               ).map((img, idx) => (
-                <div key={`${img}-${idx}`} className="relative h-[190px] md:h-[242px] bg-muted">
-                  <Image
-                    src={img}
-                    alt={`${property.title} - Gallery image ${idx + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover rounded-xl"
-                    unoptimized
-                  />
+                <div key={`${img}-${idx}`} className="relative h-[190px] md:h-[242px] bg-muted rounded-xl overflow-hidden">
+                  {!galleryErrors[idx] ? (
+                    <Image
+                      src={img}
+                      alt={`${property.title} - Gallery image ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover"
+                      onError={() => setGalleryErrors(prev => ({ ...prev, [idx]: true }))}
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                      <Building2 className="h-8 w-8 text-muted-foreground/50" />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -232,6 +343,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                     <label className="text-sm font-medium mb-2 block">Check-in</label>
                     <input
                       type="date"
+                      value={checkIn}
+                      onChange={(e) => setCheckIn(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
                       className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
@@ -239,12 +353,19 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                     <label className="text-sm font-medium mb-2 block">Check-out</label>
                     <input
                       type="date"
+                      value={checkOut}
+                      onChange={(e) => setCheckOut(e.target.value)}
+                      min={checkIn || new Date().toISOString().split('T')[0]}
                       className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Guests</label>
-                    <select className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+                    <select 
+                      value={guests}
+                      onChange={(e) => setGuests(Number(e.target.value))}
+                      className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
                       {Array.from({ length: property.guests }, (_, i) => i + 1).map((num) => (
                         <option key={num} value={num}>
                           {num} {num === 1 ? 'guest' : 'guests'}
@@ -254,28 +375,34 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                   </div>
                 </div>
 
-                <Button className="w-full py-6 text-base rounded-xl">
-                  Reserve Now
+                <Button 
+                  className="w-full py-6 text-base rounded-xl" 
+                  onClick={handleReserve}
+                  disabled={bookingLoading || !checkIn || !checkOut}
+                >
+                  {bookingLoading ? "Processing..." : "Reserve Now"}
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground mt-4">
-                  You won't be charged yet
+                  {user ? "You won't be charged yet" : "Sign in to make a reservation"}
                 </p>
 
-                <div className="mt-6 pt-6 border-t border-border space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">${property.price} × 5 nights</span>
-                    <span>${property.price * 5}</span>
+                {nights > 0 && (
+                  <div className="mt-6 pt-6 border-t border-border space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">${property.price} × {nights} {nights === 1 ? 'night' : 'nights'}</span>
+                      <span>${totalPrice}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Service fee (10%)</span>
+                      <span>${serviceFee}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold pt-3 border-t border-border text-lg">
+                      <span>Total</span>
+                      <span>${grandTotal}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Service fee</span>
-                    <span>${Math.round(property.price * 5 * 0.1)}</span>
-                  </div>
-                  <div className="flex justify-between font-semibold pt-3 border-t border-border">
-                    <span>Total</span>
-                    <span>${property.price * 5 + Math.round(property.price * 5 * 0.1)}</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

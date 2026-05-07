@@ -36,10 +36,6 @@ export function Nav() {
     { label: "Sign Up", href: "/signup", icon: "user-plus", variant: "dark" as const },
   ];
   
-  if (loading) {
-    return null;
-  }
-  
   return (
     <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[72rem] flex items-center gap-3">
       <div className="flex-1">
