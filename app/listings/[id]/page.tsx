@@ -19,23 +19,7 @@ import {
   Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface Property {
-  _id: string;
-  title: string;
-  location: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  image: string;
-  images?: string[];
-  type: 'apartment' | 'house' | 'villa' | 'cabin';
-  bedrooms: number;
-  bathrooms: number;
-  guests: number;
-  description?: string;
-  amenities?: string[];
-}
+import { Property } from "@/types/property";
 
 interface PropertyDetailPageProps {
   params: {

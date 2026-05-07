@@ -9,23 +9,7 @@ import { PropertyCard } from "@/components/property-card";
 import { Container } from "@/components/ui/layout";
 import { Heading, Text } from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
-
-interface Property {
-  _id: string;
-  title: string;
-  location: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  image: string;
-  images?: string[];
-  type: 'apartment' | 'house' | 'villa' | 'cabin';
-  bedrooms: number;
-  bathrooms: number;
-  guests: number;
-  description?: string;
-  amenities?: string[];
-}
+import { Property } from "@/types/property";
 
 export default function ListingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
