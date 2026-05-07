@@ -15,15 +15,15 @@ export function Button3D({
   size = 'md', 
   className, 
   children,
+  disabled,
   ...props 
 }: Button3DProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const shadowRef = useRef<HTMLDivElement>(null);
 
   const variants = {
-    primary: 'bg-[--color-primary] text-[--color-on-primary] shadow-[0_6px_0_var(--color-primary-dark)]',
-    secondary: 'bg-[--color-secondary] text-[--color-on-secondary] shadow-[0_6px_0_var(--color-stone-dark)]',
-    outlined: 'bg-transparent border-2 border-[--color-primary] text-[--color-primary] shadow-[0_6px_0_var(--color-primary)]',
+    primary: 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-[0_6px_0_var(--color-primary-dark)] active:shadow-[0_2px_0_var(--color-primary-dark)]',
+    secondary: 'bg-[var(--color-secondary)] text-[var(--color-on-secondary)] shadow-[0_6px_0_var(--color-stone-dark)] active:shadow-[0_2px_0_var(--color-stone-dark)]',
+    outlined: 'bg-transparent border-2 border-[var(--color-primary)] text-[var(--color-primary)] shadow-[0_6px_0_var(--color-primary)] active:shadow-[0_2px_0_var(--color-primary)]',
   };
 
   const sizes = {
@@ -34,11 +34,11 @@ export function Button3D({
 
   useEffect(() => {
     const button = buttonRef.current;
-    if (!button) return;
+    if (!button || disabled) return;
 
     const handleMouseEnter = () => {
       gsap.to(button, {
-        y: -2,
+        y: -3,
         duration: 0.2,
         ease: 'power2.out'
       });
@@ -54,7 +54,7 @@ export function Button3D({
 
     const handleMouseDown = () => {
       gsap.to(button, {
-        y: 6,
+        y: 4,
         duration: 0.1,
         ease: 'power2.in'
       });
@@ -62,7 +62,7 @@ export function Button3D({
 
     const handleMouseUp = () => {
       gsap.to(button, {
-        y: -2,
+        y: -3,
         duration: 0.1,
         ease: 'power2.out'
       });
@@ -79,24 +79,23 @@ export function Button3D({
       button.removeEventListener('mousedown', handleMouseDown);
       button.removeEventListener('mouseup', handleMouseUp);
     };
-  }, []);
+  }, [disabled]);
 
   return (
-    <div className="relative inline-block">
-      <button
-        ref={buttonRef}
-        className={cn(
-          'relative rounded-[--radius-full] font-semibold transition-all duration-200',
-          'active:translate-y-[6px] active:shadow-none',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          variants[variant],
-          sizes[size],
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </button>
-    </div>
+    <button
+      ref={buttonRef}
+      className={cn(
+        'relative rounded-full font-semibold transition-all duration-200',
+        'will-change-transform',
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none',
+        variants[variant],
+        sizes[size],
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
