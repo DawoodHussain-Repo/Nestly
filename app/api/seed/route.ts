@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server';
 import { seedDatabase } from '@/lib/seed';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     // Only allow in development
     if (process.env.NODE_ENV === 'production') {
       return NextResponse.json(
         { error: 'Seeding is only allowed in development' },
         { status: 403 }
+      );
+    }
+
+    // Require seed key for additional security
+    const seedKey = request.headers.get('x-seed-key');
+    if (seedKey !== process.env.SEED_SECRET_KEY) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid seed key' },
+        { status: 401 }
       );
     }
 
@@ -20,10 +29,11 @@ export async function POST() {
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Seed error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: error.message || 'Failed to seed database' },
+      { error: 'Failed to seed database' },
       { status: 500 }
     );
   }

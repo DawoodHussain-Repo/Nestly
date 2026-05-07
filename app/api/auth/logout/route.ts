@@ -30,10 +30,10 @@ export async function POST(request: NextRequest) {
     response.cookies.delete('refreshToken');
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

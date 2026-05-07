@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
-import { verifyRefreshToken, generateAccessToken } from '@/lib/jwt';
+import { verifyRefreshToken, generateAccessToken, hashToken } from '@/lib/jwt';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,9 +25,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user and verify refresh token matches
+    // Find user and verify hashed refresh token matches
     const user = await User.findById(payload.userId).select('+refreshToken');
-    if (!user || user.refreshToken !== refreshToken) {
+    if (!user || user.refreshToken !== hashToken(refreshToken)) {
       return NextResponse.json(
         { error: 'Invalid refresh token' },
         { status: 401 }
@@ -56,10 +56,10 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Refresh token error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

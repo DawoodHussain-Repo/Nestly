@@ -11,28 +11,49 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const requestedLimit = parseInt(searchParams.get('limit') || '50');
     const page = parseInt(searchParams.get('page') || '1');
+
+    // Validate and cap limit
+    const limit = Math.min(Math.max(1, requestedLimit), 100);
 
     // Build query
     const query: any = { available: true };
 
     if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { location: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ];
+      // Use text index for better performance and security
+      query.$text = { $search: search };
     }
 
     if (type && type !== 'All Types') {
       query.type = type.toLowerCase();
     }
 
+    // Validate and apply price filters
     if (minPrice || maxPrice) {
       query.price = {};
-      if (minPrice) query.price.$gte = parseInt(minPrice);
-      if (maxPrice) query.price.$lte = parseInt(maxPrice);
+      
+      if (minPrice) {
+        const minPriceNum = Number(minPrice);
+        if (isNaN(minPriceNum)) {
+          return NextResponse.json(
+            { error: 'Invalid minPrice parameter' },
+            { status: 400 }
+          );
+        }
+        query.price.$gte = minPriceNum;
+      }
+      
+      if (maxPrice) {
+        const maxPriceNum = Number(maxPrice);
+        if (isNaN(maxPriceNum)) {
+          return NextResponse.json(
+            { error: 'Invalid maxPrice parameter' },
+            { status: 400 }
+          );
+        }
+        query.price.$lte = maxPriceNum;
+      }
     }
 
     // Execute query with pagination
@@ -59,10 +80,10 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Listings error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

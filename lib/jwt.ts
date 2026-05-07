@@ -1,7 +1,12 @@
 import jwt from 'jsonwebtoken';
+import { createHash } from 'crypto';
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your-access-token-secret-change-in-production';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-token-secret-change-in-production';
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
+if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
+  throw new Error('JWT secrets are not defined. Set ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET in environment variables.');
+}
 
 const ACCESS_TOKEN_EXPIRY = '15m'; // 15 minutes
 const REFRESH_TOKEN_EXPIRY = '7d'; // 7 days
@@ -9,6 +14,10 @@ const REFRESH_TOKEN_EXPIRY = '7d'; // 7 days
 export interface TokenPayload {
   userId: string;
   email: string;
+}
+
+export function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
 }
 
 export function generateAccessToken(payload: TokenPayload): string {

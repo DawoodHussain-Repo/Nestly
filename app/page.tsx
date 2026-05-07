@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Building2,
   Calendar as CalendarIcon,
@@ -142,6 +143,7 @@ function Calendar({ onSelectDate }: { onSelectDate: (date: Date) => void }) {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -205,7 +207,7 @@ export default function Home() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      window.location.href = `/listings?search=${encodeURIComponent(searchQuery)}`;
+      router.push(`/listings?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -219,11 +221,11 @@ export default function Home() {
       <div className="h-28" />
 
       <main className="flex-grow">
-        <section className="relative py-32 px-6 overflow-hidden bg-gradient-to-br from-secondary/30 via-background to-secondary/20">
+        <section className="relative py-32 px-6 overflow-visible bg-gradient-to-br from-secondary/30 via-background to-secondary/20">
           {/* Decorative Elements */}
-          <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/3 to-transparent rounded-full blur-3xl" />
+          <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl -z-10" />
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/3 to-transparent rounded-full blur-3xl -z-10" />
           
           {/* Floating Cards */}
           <div className="absolute top-32 left-[10%] hidden lg:block">
@@ -254,7 +256,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full max-w-7xl mx-auto flex flex-col items-center text-center gap-10 relative z-10">
+          <div className="w-full max-w-7xl mx-auto flex flex-col items-center text-center gap-10 relative z-10 overflow-visible">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-primary/20 rounded-full shadow-sm">
               <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
               <span className="text-xs font-semibold tracking-wide text-foreground uppercase">
@@ -275,9 +277,9 @@ export default function Home() {
             </p>
 
             {/* Airbnb-style Search Bar */}
-            <div className="mt-12 w-full max-w-5xl bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch p-3 relative backdrop-blur-sm">
+            <div className="mt-12 w-full max-w-5xl bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch p-3 relative backdrop-blur-sm overflow-visible">
               {/* Location */}
-              <div className="flex-1 relative" ref={locationRef}>
+              <div className="flex-1 relative overflow-visible" ref={locationRef}>
                 <button
                   onClick={() => {
                     setShowLocationDropdown(!showLocationDropdown);
@@ -337,7 +339,7 @@ export default function Home() {
               <div className="hidden md:block w-px h-12 bg-border self-center" />
 
               {/* Dates */}
-              <div className="flex-1 relative" ref={dateRef}>
+              <div className="flex-1 relative overflow-visible" ref={dateRef}>
                 <button
                   onClick={() => {
                     setShowDateDropdown(!showDateDropdown);
@@ -371,7 +373,7 @@ export default function Home() {
               <div className="hidden md:block w-px h-12 bg-border self-center" />
 
               {/* Guests */}
-              <div className="flex-1 relative" ref={guestsRef}>
+              <div className="flex-1 relative overflow-visible" ref={guestsRef}>
                 <button
                   onClick={() => {
                     setShowGuestsDropdown(!showGuestsDropdown);
@@ -431,7 +433,7 @@ export default function Home() {
         </section>
 
         {/* Category Bar */}
-        <div className="bg-background border-b border-border">
+        <div className="relative bg-background border-b border-border">
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center">
               {categories.map((cat) => {
@@ -475,16 +477,16 @@ export default function Home() {
               </p>
             </div>
           </div>
-          {filteredListings.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-24">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-lg text-muted-foreground">Loading properties...</p>
+            </div>
+          ) : filteredListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
               {filteredListings.slice(0, 8).map((property) => (
                 <PropertyCard key={property._id} property={{ ...property, id: property._id }} variant="compact" />
               ))}
-            </div>
-          ) : loading ? (
-            <div className="text-center py-24">
-              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-lg text-muted-foreground">Loading properties...</p>
             </div>
           ) : (
             <div className="text-center py-24 bg-secondary/30 rounded-3xl">

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
-import { generateTokens } from '@/lib/jwt';
+import { generateTokens, hashToken } from '@/lib/jwt';
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
       email: user.email,
     });
 
-    // Save refresh token to user
-    user.refreshToken = refreshToken;
+    // Save hashed refresh token to user
+    user.refreshToken = hashToken(refreshToken);
     await user.save();
 
     // Create response
@@ -83,10 +83,10 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Signup error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

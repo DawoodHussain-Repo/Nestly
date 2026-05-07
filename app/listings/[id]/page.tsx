@@ -51,14 +51,16 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
     async function fetchProperty() {
       try {
         setLoading(true);
-        const response = await fetch('/api/listings');
+        const response = await fetch(`/api/listings/${params.id}`);
         const data = await response.json();
         if (data.success) {
-          const found = data.data.find((p: Property) => p._id === params.id);
-          setProperty(found || null);
+          setProperty(data.data);
+        } else {
+          setProperty(null);
         }
       } catch (error) {
         console.error('Failed to fetch property:', error);
+        setProperty(null);
       } finally {
         setLoading(false);
       }
@@ -112,11 +114,11 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {(property.images && property.images.length > 0 ? property.images.slice(0, 4) : [property.image, property.image, property.image, property.image]).map((img, i) => (
-                <div key={i} className="relative h-[190px] md:h-[242px]">
+              {(property.images && property.images.length > 0 ? property.images.slice(0, 4) : [property.image, property.image, property.image, property.image]).map((img) => (
+                <div key={img} className="relative h-[190px] md:h-[242px]">
                   <Image
                     src={img}
-                    alt={`${property.title} - Image ${i + 1}`}
+                    alt={`${property.title} - Gallery image`}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover rounded-xl"

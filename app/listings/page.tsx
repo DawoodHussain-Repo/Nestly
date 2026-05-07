@@ -148,16 +148,16 @@ export default function ListingsPage() {
               Filter by destination, property type, and budget to find your best match.
             </Text>
 
-            {filteredProperties.length > 0 ? (
+            {loading ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-lg text-muted-foreground">Loading properties...</p>
+              </div>
+            ) : filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProperties.map((property) => (
                   <PropertyCard key={property._id} property={{ ...property, id: property._id }} />
                 ))}
-              </div>
-            ) : loading ? (
-              <div className="text-center py-16">
-                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-lg text-muted-foreground">Loading properties...</p>
               </div>
             ) : (
               <div className="text-center py-16">
