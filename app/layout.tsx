@@ -6,19 +6,18 @@ import './globals.css'
 const notoSerif = Noto_Serif({ 
   subsets: ['latin'],
   weight: ['400', '600', '700'],
-  variable: '--font-headline',
+  variable: '--font-heading',
 })
 
 const publicSans = Public_Sans({ 
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-body',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-sans',
 })
 
 export const metadata: Metadata = {
-  title: 'Nestly - Find a place that feels like home',
-  description: 'Discover unique rental properties worldwide with Nestly',
-  generator: 'v0.app',
+  title: 'Nestly - Find Your Perfect Stay',
+  description: 'Discover unique rental properties and experiences around the world',
   icons: {
     icon: [
       {
@@ -44,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${notoSerif.variable} ${publicSans.variable} light`}>
+    <html lang="en" className={`${notoSerif.variable} ${publicSans.variable}`}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
