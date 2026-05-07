@@ -1,11 +1,5 @@
 .pill-nav-container {
-  position: fixed;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  width: 95%;
-  max-width: 72rem;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -108,13 +102,14 @@
   overflow: hidden;
   transition: all 0.2s ease;
   isolation: isolate;
-  border: 1px solid transparent;
+  border: 1px solid #B31C33;
 }
 
 .pill:hover {
   background: #9a1829;
   transform: translateY(-1px);
   border: 1px solid #B31C33;
+  box-shadow: 0 0 0 1px #B31C33;
   z-index: 10;
 }
 
@@ -122,12 +117,13 @@
   background: #1A1A1A;
   color: #FFFFFF;
   overflow: hidden;
-  border: 1px solid transparent;
+  border: 1px solid #1A1A1A;
 }
 
 .pill-dark:hover {
   background: #000000;
   border: 1px solid #1A1A1A;
+  box-shadow: 0 0 0 1px #1A1A1A;
   z-index: 10;
 }
 
