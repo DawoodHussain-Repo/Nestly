@@ -20,15 +20,15 @@ export default function Home() {
       <main className="flex-grow pt-[72px]">
         {/* Hero Section */}
         <section className="bg-[var(--color-surface-container-low)] py-20 px-6 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto flex flex-col items-center text-center gap-8 relative z-10">
+          <div className="w-full max-w-7xl mx-auto flex flex-col items-center text-center gap-8 relative z-10">
             <span className="text-xs font-medium tracking-widest text-[var(--color-secondary)] uppercase">
               OVER 50,000 STAYS WORLDWIDE
             </span>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[var(--color-on-surface)] leading-tight">
+            <h1 className="w-full text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[var(--color-on-surface)] leading-tight">
               Find a place that feels like{" "}
               <span className="italic text-[var(--color-primary)]">home.</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-[var(--color-secondary)] max-w-3xl leading-relaxed">
+            <p className="w-full text-base sm:text-lg md:text-xl text-[var(--color-secondary)] leading-relaxed">
               Unique spaces across Pakistan and beyond — no booking fees, ever.
             </p>
 
@@ -252,12 +252,12 @@ export default function Home() {
 
         {/* How It Works Section */}
         <section id="how-it-works" className="py-20 px-6 bg-[var(--color-surface)]">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16 max-w-4xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-[var(--color-on-surface)] mb-4 leading-tight">
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="text-center mb-16 w-full mx-auto">
+              <h2 className="w-full text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-[var(--color-on-surface)] mb-4 leading-tight">
                 How Nestly Works
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-[var(--color-secondary)] leading-relaxed">
+              <p className="w-full text-base sm:text-lg md:text-xl text-[var(--color-secondary)] leading-relaxed">
                 Find, book, and stay in unique spaces around the world in three
                 simple steps.
               </p>

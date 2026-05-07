@@ -25,12 +25,12 @@ export default function SigninPage() {
           </Link>
 
           {/* Hero Quote */}
-          <h1 className="text-4xl font-serif font-bold text-[var(--color-on-surface)] max-w-lg leading-tight mb-8">
+          <h1 className="w-full text-4xl font-serif font-bold text-[var(--color-on-surface)] leading-tight mb-8">
             Welcome back to your next adventure.
           </h1>
 
           {/* Benefits */}
-          <ul className="space-y-6 mb-8 max-w-md">
+          <ul className="w-full space-y-6 mb-8">
             {[
               "Manage your property bookings and guest communications.",
               "Quick access to your messages and notifications.",
