@@ -2,9 +2,16 @@ import Link from "next/link";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const linkClass = "text-sm text-background/70 hover:text-background transition-colors";
+  const sections = [
+    { title: "Support", links: ["Help Center", "Contact Us", "Safety"] },
+    { title: "Community", links: ["Become a Host", "Community Center", "Blog"] },
+    { title: "Legal", links: ["Privacy", "Terms", "Cookies"] },
+  ];
+  const socials = ["Facebook", "Twitter", "Instagram"];
 
   return (
-    <footer className="text-white bg-inverse-surface">
+    <footer className="bg-foreground text-background">
       <div className="py-12 md:py-20 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Top Section */}
@@ -17,142 +24,45 @@ export function Footer() {
                     N
                   </span>
                 </div>
-                <span className="font-serif text-lg font-bold text-inverse-on-surface">
+                <span className="font-heading text-lg font-bold text-background">
                   Nestly
                 </span>
               </div>
-              <p className="body-sm text-inverse-on-surface/70">
+              <p className="text-sm text-background/70">
                 Discover unique places and unforgettable experiences worldwide.
               </p>
             </div>
 
-            {/* Support */}
-            <div>
-              <h4 className="label-md font-bold mb-4 text-inverse-on-surface">
-                Support
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Safety
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Community */}
-            <div>
-              <h4 className="label-md font-bold mb-4 text-inverse-on-surface">
-                Community
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Become a Host
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Community Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Blog
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h4 className="label-md font-bold mb-4 text-inverse-on-surface">
-                Legal
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-                  >
-                    Cookies
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {sections.map((section) => (
+              <div key={section.title}>
+                <h4 className="text-sm font-semibold mb-4 text-background">{section.title}</h4>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link}>
+                      <Link href="/" className={linkClass}>
+                        {link}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
           {/* Divider */}
-          <div className="border-t border-inverse-on-surface/20 mb-6" />
+          <div className="border-t border-background/20 mb-6" />
 
           {/* Bottom Section */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="body-sm text-inverse-on-surface/70">
+            <p className="text-sm text-background/70">
               &copy; {currentYear} Nestly, Inc. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link
-                href="/"
-                className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-              >
-                Facebook
-              </Link>
-              <Link
-                href="/"
-                className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-              >
-                Twitter
-              </Link>
-              <Link
-                href="/"
-                className="body-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-              >
-                Instagram
-              </Link>
+              {socials.map((social) => (
+                <Link key={social} href="/" className={linkClass}>
+                  {social}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

@@ -7,55 +7,49 @@ interface NavbarProps {
 }
 
 export function Navbar({ activePage = "home" }: NavbarProps) {
+  const navLinks = [
+    { href: "/listings", label: "Listings", key: "listings" },
+    { href: "/how-it-works", label: "How it Works", key: "how" },
+    { href: "/messages", label: "Messages", key: "messages" },
+  ] as const;
+
   return (
-    <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
         <Link
           href="/"
-          className="text-headline-lg font-headline-lg tracking-tight text-on-surface italic"
+          className="text-2xl font-heading font-semibold tracking-tight text-foreground"
         >
           nest<span className="text-primary">ly</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          <Link
-            href="/listings"
-            className={`text-label-lg font-label-lg transition-colors ${
-              activePage === "listings"
-                ? "text-primary border-b-2 border-primary pb-1"
-                : "text-secondary hover:text-primary"
-            }`}
-          >
-            Listings
-          </Link>
-          <Link
-            href="/how-it-works"
-            className="text-label-lg font-label-lg text-secondary hover:text-primary transition-colors"
-          >
-            How it Works
-          </Link>
-          <Link
-            href="/messages"
-            className={`text-label-lg font-label-lg transition-colors ${
-              activePage === "messages"
-                ? "text-primary border-b-2 border-primary pb-1"
-                : "text-secondary hover:text-primary"
-            }`}
-          >
-            Messages
-          </Link>
+          {navLinks.map((link) => {
+            const isActive = activePage === link.key;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors ${
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-4">
           <Link
             href="/signin"
-            className="text-label-lg font-label-lg text-on-surface border border-outline px-4 py-2 rounded-full hover:bg-surface-container transition-all duration-200"
+            className="text-sm font-medium text-foreground border border-border px-4 py-2 rounded-full hover:bg-secondary transition-colors"
           >
             Sign In
           </Link>
           <Link
             href="/signup"
-            className="text-label-lg font-label-lg bg-primary text-on-primary px-6 py-2 rounded-full hover:bg-primary-container transition-all duration-200"
+            className="text-sm font-medium bg-primary text-primary-foreground px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
           >
             Sign Up
           </Link>

@@ -49,8 +49,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Public Sans', system-ui, sans-serif;
-  --font-heading: 'Noto Serif', 'Georgia', serif;
+  --font-sans: var(--font-urbanist), system-ui, sans-serif;
+  --font-heading: var(--font-urbanist), system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

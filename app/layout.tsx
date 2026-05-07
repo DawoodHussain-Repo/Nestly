@@ -1,18 +1,12 @@
 import type { Metadata } from 'next'
-import { Noto_Serif, Public_Sans } from 'next/font/google'
+import { Urbanist } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const notoSerif = Noto_Serif({ 
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-heading',
-})
-
-const publicSans = Public_Sans({ 
+const urbanist = Urbanist({ 
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-sans',
+  variable: '--font-urbanist',
 })
 
 export const metadata: Metadata = {
@@ -43,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${notoSerif.variable} ${publicSans.variable}`}>
+    <html lang="en" className={urbanist.variable}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>

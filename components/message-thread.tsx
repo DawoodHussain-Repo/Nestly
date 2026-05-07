@@ -1,6 +1,8 @@
 import { Message } from '@/lib/mock-data'
 import { formatDistanceToNow } from 'date-fns'
 import { Avatar } from './avatar'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 interface MessageThreadProps {
   messages: Message[]
@@ -10,12 +12,11 @@ interface MessageThreadProps {
 export function MessageThread({ messages, currentUserId }: MessageThreadProps) {
   return (
     <div className="flex flex-col h-full">
-      {/* Messages Container */}
       <div className="flex-1 overflow-y-auto space-y-4 p-4">
         {messages.length === 0 ? (
-          <div className="flex-col-center h-full text-center">
-            <p className="body-lg text-muted-foreground">No messages yet</p>
-            <p className="body-sm text-muted-foreground">Start a conversation by sending a message</p>
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <p className="text-lg text-muted-foreground">No messages yet</p>
+            <p className="text-sm text-muted-foreground">Start a conversation by sending a message</p>
           </div>
         ) : (
           messages.map((message) => {
@@ -26,23 +27,20 @@ export function MessageThread({ messages, currentUserId }: MessageThreadProps) {
                 key={message.id}
                 className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
               >
-                {/* Avatar */}
                 {!isOwn && <Avatar src={message.senderAvatar} name={message.senderName} />}
-
-                {/* Message Content */}
                 <div
                   className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} gap-1`}
                 >
                   <p
-                    className={`body-md px-4 py-2 rounded-sm max-w-xs lg:max-w-md ${
+                    className={`px-4 py-2 rounded-2xl max-w-xs lg:max-w-md text-sm ${
                       isOwn
-                        ? 'bg-primary text-white'
-                        : 'bg-muted text-foreground'
+                        ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                        : 'bg-secondary text-foreground rounded-tl-sm border border-border'
                     }`}
                   >
                     {message.content}
                   </p>
-                  <p className="body-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
                   </p>
                 </div>
@@ -52,17 +50,16 @@ export function MessageThread({ messages, currentUserId }: MessageThreadProps) {
         )}
       </div>
 
-      {/* Input Area */}
       <div className="border-t border-border p-4">
         <div className="flex gap-3">
-          <input
+          <Input
             type="text"
             placeholder="Type your message..."
-            className="input-base flex-1"
+            className="flex-1 h-11 rounded-full bg-secondary border-border"
           />
-          <button className="btn-primary btn-sm">
+          <Button className="h-11 rounded-full px-5">
             Send
-          </button>
+          </Button>
         </div>
       </div>
     </div>
