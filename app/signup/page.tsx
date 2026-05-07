@@ -62,7 +62,7 @@ export default function SignupPage() {
 
       {/* Right Panel (Form Area) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:p-12 bg-[var(--color-surface)] min-h-screen lg:min-h-0">
-        <div className="w-full max-w-md bg-[var(--color-surface-container-lowest)] rounded-xl p-8 sm:p-10 border border-[var(--color-surface-dim)] shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="w-full max-w-xl bg-[var(--color-surface-container-lowest)] rounded-xl p-8 sm:p-10 border border-[var(--color-surface-dim)] shadow-sm hover:shadow-md transition-shadow duration-300">
           {/* Mobile Logo */}
           <Link
             href="/"
