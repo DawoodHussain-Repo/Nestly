@@ -28,9 +28,9 @@ interface CategoryBarProps {
 
 export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarProps) {
   return (
-    <div className="relative bg-background border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center">
+    <div className="relative bg-background border-b border-border overflow-visible">
+      <div className="max-w-7xl mx-auto px-6 py-8 overflow-visible">
+        <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center overflow-y-visible pb-2">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const active = selectedCategory === cat.id;
@@ -38,7 +38,7 @@ export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarP
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`flex flex-col items-center gap-3 min-w-[80px] transition-all ${
+                className={`flex flex-col items-center gap-3 min-w-[80px] transition-all flex-shrink-0 ${
                   active
                     ? "opacity-100 text-primary scale-105"
                     : "opacity-70 text-muted-foreground hover:opacity-100 hover:scale-105"

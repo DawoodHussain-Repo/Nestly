@@ -37,6 +37,7 @@
   justify-content: center;
   margin: 0 1.5rem;
   overflow: visible;
+  padding: 4px 0;
 }
 
 .pill-logo {
@@ -79,14 +80,15 @@
 .pill-list > li {
   display: flex;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
+  padding: 2px 0;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: calc(100% - 4px);
   padding: 0 var(--pill-pad-x);
   background: #B31C33;
   color: #FFFFFF;
@@ -102,14 +104,13 @@
   overflow: hidden;
   transition: all 0.2s ease;
   isolation: isolate;
-  border: 1px solid #B31C33;
+  border: 2px solid #B31C33;
 }
 
 .pill:hover {
   background: #9a1829;
   transform: translateY(-1px);
-  border: 1px solid #B31C33;
-  box-shadow: 0 0 0 1px #B31C33;
+  border: 2px solid #B31C33;
   z-index: 10;
 }
 
@@ -117,13 +118,12 @@
   background: #1A1A1A;
   color: #FFFFFF;
   overflow: hidden;
-  border: 1px solid #1A1A1A;
+  border: 2px solid #1A1A1A;
 }
 
 .pill-dark:hover {
   background: #000000;
-  border: 1px solid #1A1A1A;
-  box-shadow: 0 0 0 1px #1A1A1A;
+  border: 2px solid #1A1A1A;
   z-index: 10;
 }
 
