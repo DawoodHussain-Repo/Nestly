@@ -24,11 +24,11 @@ export default function Home() {
             <span className="text-xs font-medium tracking-widest text-[var(--color-secondary)] uppercase">
               OVER 50,000 STAYS WORLDWIDE
             </span>
-            <h1 className="text-5xl md:text-6xl font-serif font-bold max-w-4xl text-[var(--color-on-surface)]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[var(--color-on-surface)] leading-tight">
               Find a place that feels like{" "}
               <span className="italic text-[var(--color-primary)]">home.</span>
             </h1>
-            <p className="text-lg text-[var(--color-secondary)] max-w-2xl">
+            <p className="text-base sm:text-lg md:text-xl text-[var(--color-secondary)] max-w-3xl leading-relaxed">
               Unique spaces across Pakistan and beyond — no booking fees, ever.
             </p>
 
@@ -253,11 +253,11 @@ export default function Home() {
         {/* How It Works Section */}
         <section id="how-it-works" className="py-20 px-6 bg-[var(--color-surface)]">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-serif font-semibold text-[var(--color-on-surface)] mb-3">
+            <div className="text-center mb-16 max-w-4xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-[var(--color-on-surface)] mb-4 leading-tight">
                 How Nestly Works
               </h2>
-              <p className="text-lg text-[var(--color-secondary)] max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-[var(--color-secondary)] leading-relaxed">
                 Find, book, and stay in unique spaces around the world in three
                 simple steps.
               </p>
@@ -284,13 +284,13 @@ export default function Home() {
                   key={item.step}
                   className="text-center p-8 rounded-2xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-surface-variant)] hover:shadow-md transition-shadow"
                 >
-                  <span className="text-5xl font-serif font-bold text-[var(--color-primary)]/20 block mb-4">
+                  <span className="text-6xl md:text-7xl font-serif font-bold text-[var(--color-primary)]/20 block mb-4">
                     {item.step}
                   </span>
-                  <h3 className="text-xl font-serif font-semibold text-[var(--color-on-surface)] mb-3">
+                  <h3 className="text-xl md:text-2xl font-serif font-semibold text-[var(--color-on-surface)] mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-base text-[var(--color-secondary)]">
+                  <p className="text-base md:text-lg text-[var(--color-secondary)] leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
