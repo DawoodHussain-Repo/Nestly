@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PROPERTY_TYPES, PRICE_RANGES, UI } from "@/constants";
@@ -9,16 +9,53 @@ import { PropertyCard } from "@/components/property-card";
 import { Container } from "@/components/ui/layout";
 import { Heading, Text } from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
-import { mockProperties } from "@/lib/mock-data";
+
+interface Property {
+  _id: string;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  images?: string[];
+  type: 'apartment' | 'house' | 'villa' | 'cabin';
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  description?: string;
+  amenities?: string[];
+}
 
 export default function ListingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [propertyType, setPropertyType] = useState<string>(PROPERTY_TYPES[0] ?? "All Types");
   const [priceRange, setPriceRange] = useState<string>(PRICE_RANGES[0] ?? "Price: Any");
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const debouncedQuery = useDebounce(searchQuery, UI.DEBOUNCE_DELAY_MS);
 
+  // Fetch properties from API
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/listings');
+        const data = await response.json();
+        if (data.success) {
+          setProperties(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProperties();
+  }, []);
+
   const filteredProperties = useMemo(() => {
-    let filtered = [...mockProperties];
+    let filtered = [...properties];
 
     // Apply search filter
     if (debouncedQuery.trim()) {
@@ -51,7 +88,7 @@ export default function ListingsPage() {
     }
 
     return filtered;
-  }, [debouncedQuery, propertyType, priceRange]);
+  }, [properties, debouncedQuery, propertyType, priceRange]);
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col">
@@ -114,8 +151,13 @@ export default function ListingsPage() {
             {filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProperties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
+                  <PropertyCard key={property._id} property={{ ...property, id: property._id }} />
                 ))}
+              </div>
+            ) : loading ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-lg text-muted-foreground">Loading properties...</p>
               </div>
             ) : (
               <div className="text-center py-16">

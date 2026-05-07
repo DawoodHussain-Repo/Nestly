@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,8 +18,24 @@ import {
   Heart,
   Share2
 } from "lucide-react";
-import { mockProperties } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
+
+interface Property {
+  _id: string;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  images?: string[];
+  type: 'apartment' | 'house' | 'villa' | 'cabin';
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  description?: string;
+  amenities?: string[];
+}
 
 interface PropertyDetailPageProps {
   params: {
@@ -27,18 +44,42 @@ interface PropertyDetailPageProps {
 }
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
-  const property = mockProperties.find((p) => p.id === params.id);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProperty() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/listings');
+        const data = await response.json();
+        if (data.success) {
+          const found = data.data.find((p: Property) => p._id === params.id);
+          setProperty(found || null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch property:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProperty();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">Loading property...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!property) {
     notFound();
   }
-
-  const amenities = [
-    { icon: Wifi, label: "Free WiFi" },
-    { icon: Car, label: "Free Parking" },
-    { icon: Tv, label: "Smart TV" },
-    { icon: Wind, label: "Air Conditioning" },
-  ];
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col">
@@ -71,10 +112,10 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((i) => (
+              {(property.images && property.images.length > 0 ? property.images.slice(0, 4) : [property.image, property.image, property.image, property.image]).map((img, i) => (
                 <div key={i} className="relative h-[190px] md:h-[242px]">
                   <Image
-                    src={property.image}
+                    src={img}
                     alt={`${property.title} - Image ${i + 1}`}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
@@ -152,11 +193,11 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               <div className="mb-8 pb-8 border-b border-border">
                 <h2 className="text-2xl font-heading font-semibold mb-4">About this place</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Experience luxury and comfort in this beautifully designed {property.type.toLowerCase()}. 
+                  {property.description || `Experience luxury and comfort in this beautifully designed ${property.type.toLowerCase()}. 
                   Perfect for families or groups, this property offers modern amenities and stunning views. 
-                  Located in the heart of {property.location}, you'll have easy access to local attractions, 
+                  Located in the heart of ${property.location}, you'll have easy access to local attractions, 
                   restaurants, and entertainment. The space features high-end furnishings, a fully equipped 
-                  kitchen, and comfortable sleeping arrangements for up to {property.guests} guests.
+                  kitchen, and comfortable sleeping arrangements for up to ${property.guests} guests.`}
                 </p>
               </div>
 
@@ -164,12 +205,14 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               <div className="mb-8">
                 <h2 className="text-2xl font-heading font-semibold mb-4">Amenities</h2>
                 <div className="grid grid-cols-2 gap-4">
-                  {amenities.map((amenity, idx) => {
-                    const Icon = amenity.icon;
+                  {(property.amenities && property.amenities.length > 0 ? property.amenities : ['WiFi', 'Kitchen', 'Air Conditioning', 'Heating']).map((amenity, idx) => {
+                    const Icon = amenity.toLowerCase().includes('wifi') ? Wifi : 
+                                amenity.toLowerCase().includes('parking') || amenity.toLowerCase().includes('car') ? Car :
+                                amenity.toLowerCase().includes('tv') ? Tv : Wind;
                     return (
                       <div key={idx} className="flex items-center gap-3 p-4 border border-border rounded-xl">
                         <Icon size={20} className="text-primary" />
-                        <span>{amenity.label}</span>
+                        <span>{amenity}</span>
                       </div>
                     );
                   })}

@@ -20,8 +20,24 @@ import {
 } from "lucide-react";
 import { HowItWorksSection } from "@/components/how-it-works/section";
 import { PropertyCard } from "@/components/property-card";
-import { mockProperties } from "@/lib/mock-data";
 import { useDebounce } from "@/hooks/useDebounce";
+
+interface Property {
+  _id: string;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  images?: string[];
+  type: 'apartment' | 'house' | 'villa' | 'cabin';
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  description?: string;
+  amenities?: string[];
+}
 
 const categories = [
   { id: "all", name: "All", icon: Building2, filter: null },
@@ -133,11 +149,32 @@ export default function Home() {
   const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [guests, setGuests] = useState(1);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const debouncedSearch = useDebounce(searchQuery, 300);
   
   const locationRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
   const guestsRef = useRef<HTMLDivElement>(null);
+
+  // Fetch properties from API
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/listings');
+        const data = await response.json();
+        if (data.success) {
+          setProperties(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProperties();
+  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -157,7 +194,7 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredListings = mockProperties.filter((p) => {
+  const filteredListings = properties.filter((p) => {
     const categoryFilter = categories.find(c => c.id === selectedCategory);
     const matchesCategory = !categoryFilter?.filter || p.type === categoryFilter.filter;
     const matchesSearch = !debouncedSearch || 
@@ -441,8 +478,13 @@ export default function Home() {
           {filteredListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
               {filteredListings.slice(0, 8).map((property) => (
-                <PropertyCard key={property.id} property={property} variant="compact" />
+                <PropertyCard key={property._id} property={{ ...property, id: property._id }} variant="compact" />
               ))}
+            </div>
+          ) : loading ? (
+            <div className="text-center py-24">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-lg text-muted-foreground">Loading properties...</p>
             </div>
           ) : (
             <div className="text-center py-24 bg-secondary/30 rounded-3xl">

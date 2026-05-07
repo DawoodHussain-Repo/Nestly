@@ -23,7 +23,7 @@ export function ConditionalNav() {
       items={navItems}
       baseColor="#FFFAF0"
       pillColor="#B31C33"
-      hoveredPillTextColor="#FFFAF0"
+      hoveredPillTextColor="#1A1A1A"
       pillTextColor="#FFFFFF"
       ease="power2.easeOut"
       initialLoadAnimation={true}

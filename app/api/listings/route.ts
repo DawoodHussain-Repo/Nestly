@@ -1,143 +1,69 @@
-import { NextResponse } from "next/server";
-import { ListingQuerySchema } from "@/lib/validators";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import Property from '@/models/Property';
 
-const mockListings = [
-  {
-    id: "1",
-    name: "Modern Loft Downtown",
-    location: "New York, NY",
-    price: 185,
-    rating: 4.92,
-    reviews: 28,
-    beds: 1,
-    baths: 1,
-    type: "Studio",
-    image:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=400&fit=crop",
-  },
-  {
-    id: "2",
-    name: "Beachfront Villa",
-    location: "Malibu, CA",
-    price: 850,
-    rating: 4.96,
-    reviews: 45,
-    beds: 4,
-    baths: 3,
-    type: "Villa",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9b274b3c4a7f?w=500&h=400&fit=crop",
-  },
-  {
-    id: "3",
-    name: "Mountain Cabin Retreat",
-    location: "Aspen, CO",
-    price: 210,
-    rating: 4.85,
-    reviews: 32,
-    beds: 2,
-    baths: 1,
-    type: "Cabin",
-    image:
-      "https://images.unsplash.com/photo-1505873242700-f289a29e7e0a?w=500&h=400&fit=crop",
-  },
-  {
-    id: "4",
-    name: "Seaside Cottage",
-    location: "Santorini, Greece",
-    price: 320,
-    rating: 4.88,
-    reviews: 52,
-    beds: 2,
-    baths: 2,
-    type: "Beach",
-    image:
-      "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=500&h=400&fit=crop",
-  },
-  {
-    id: "5",
-    name: "Urban Studio",
-    location: "Los Angeles, CA",
-    price: 155,
-    rating: 4.79,
-    reviews: 18,
-    beds: 1,
-    baths: 1,
-    type: "Studio",
-    image:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=400&fit=crop",
-  },
-  {
-    id: "6",
-    name: "Luxury Penthouse",
-    location: "Miami, FL",
-    price: 550,
-    rating: 4.94,
-    reviews: 67,
-    beds: 3,
-    baths: 3,
-    type: "Penthouse",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9b274b3c4a7f?w=500&h=400&fit=crop",
-  },
-  {
-    id: "7",
-    name: "Forest Lodge",
-    location: "Portland, OR",
-    price: 225,
-    rating: 4.87,
-    reviews: 41,
-    beds: 3,
-    baths: 2,
-    type: "Cabin",
-    image:
-      "https://images.unsplash.com/photo-1505873242700-f289a29e7e0a?w=500&h=400&fit=crop",
-  },
-  {
-    id: "8",
-    name: "Desert Villa",
-    location: "Scottsdale, AZ",
-    price: 380,
-    rating: 4.91,
-    reviews: 35,
-    beds: 2,
-    baths: 2,
-    type: "Villa",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9b274b3c4a7f?w=500&h=400&fit=crop",
-  },
-];
-
-export async function GET(req: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    await connectDB();
 
-    const raw = {
-      type: searchParams.get("type") ?? undefined,
-      location: searchParams.get("location") ?? undefined,
-    };
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search');
+    const type = searchParams.get('type');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const page = parseInt(searchParams.get('page') || '1');
 
-    const parsed = ListingQuerySchema.safeParse(raw);
-    const { type, location } = parsed.success
-      ? parsed.data
-      : { type: undefined, location: undefined };
+    // Build query
+    const query: any = { available: true };
 
-    let results = [...mockListings];
-
-    if (type && type !== "All Types") {
-      results = results.filter((l) => l.type === type);
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+      ];
     }
 
-    if (location) {
-      results = results.filter((l) =>
-        l.location.toLowerCase().includes(location.toLowerCase()),
-      );
+    if (type && type !== 'All Types') {
+      query.type = type.toLowerCase();
     }
 
-    return NextResponse.json({ data: results });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unexpected error";
-    console.error("[listings/GET]", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseInt(minPrice);
+      if (maxPrice) query.price.$lte = parseInt(maxPrice);
+    }
+
+    // Execute query with pagination
+    const skip = (page - 1) * limit;
+    const [properties, total] = await Promise.all([
+      Property.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(skip)
+        .lean(),
+      Property.countDocuments(query),
+    ]);
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: properties,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error('Listings error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
