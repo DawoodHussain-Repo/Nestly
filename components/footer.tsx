@@ -11,7 +11,7 @@ export function Footer() {
   const socials = ["Facebook", "Twitter", "Instagram"];
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-foreground text-background w-full">
       <div className="py-12 md:py-20 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Top Section */}

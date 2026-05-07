@@ -1,7 +1,5 @@
 'use client'
 
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
 import { HowItWorksSection } from '@/components/how-it-works/section'
 import { BadgeCheck, CalendarClock, Headphones, ShieldCheck } from 'lucide-react'
 
@@ -52,9 +50,10 @@ const features = [
 export default function HowItWorksPage() {
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col antialiased">
-      <Navbar activePage="home" />
+      {/* Spacer for fixed pill nav */}
+      <div className="h-28" />
 
-      <main className="flex-grow pt-[72px]">
+      <main className="flex-grow">
         <HowItWorksSection
           title="Three simple steps to your next stay"
           description="Nestly makes finding and booking unique spaces effortless. Here is how it works."
@@ -90,8 +89,6 @@ export default function HowItWorksPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

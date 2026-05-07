@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Heart, MapPin, Star } from 'lucide-react'
+import Image from 'next/image'
+import { Heart, MapPin, Star, Bed, Bath, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -28,7 +29,7 @@ export function PropertyCard({
   variant = 'default',
   href,
 }: PropertyCardProps) {
-  const link = href ?? `/listings?property=${property.id}`
+  const link = href ?? `/listings/${property.id}`
   const compact = variant === 'compact'
 
   return (
@@ -36,10 +37,12 @@ export function PropertyCard({
       <div className="overflow-hidden group cursor-pointer transition-all hover:shadow-lg rounded-2xl border border-border bg-background">
         <div className={cn('relative overflow-hidden bg-muted', compact ? 'h-44' : 'h-48')}>
           {property.image ? (
-            <img
+            <Image
               src={property.image}
               alt={property.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm text-muted-foreground">
@@ -78,17 +81,26 @@ export function PropertyCard({
             ) : null}
           </div>
 
-          {!compact ? (
+          {!compact && (property.bedrooms || property.bathrooms || property.guests) ? (
             <div className="flex gap-4 mb-4 py-3 border-t border-b border-border">
-              <div>
-                <p className="text-sm text-muted-foreground">{property.bedrooms ?? 0} bedrooms</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{property.bathrooms ?? 0} bathrooms</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{property.guests ?? 0} guests</p>
-              </div>
+              {property.bedrooms ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary rounded-full">
+                  <Bed size={14} className="text-primary" />
+                  <span className="text-xs font-medium">{property.bedrooms}</span>
+                </div>
+              ) : null}
+              {property.bathrooms ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary rounded-full">
+                  <Bath size={14} className="text-primary" />
+                  <span className="text-xs font-medium">{property.bathrooms}</span>
+                </div>
+              ) : null}
+              {property.guests ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary rounded-full">
+                  <Users size={14} className="text-primary" />
+                  <span className="text-xs font-medium">{property.guests}</span>
+                </div>
+              ) : null}
             </div>
           ) : null}
 

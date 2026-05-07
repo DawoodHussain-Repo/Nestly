@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
-import { Navbar } from "@/components/navbar";
 import { MessageListItem } from "@/components/message-list-item";
 import { MessageThread } from "@/components/message-thread";
 import { Input } from "@/components/ui/input";
@@ -19,8 +18,10 @@ export default function MessagesPage() {
 
   return (
     <div className="bg-background text-foreground h-screen overflow-hidden flex">
-      <Navbar activePage="messages" />
-      <div className="flex flex-1 pt-[72px] h-full overflow-hidden w-full">
+      {/* Spacer for fixed pill nav */}
+      <div className="fixed top-0 left-0 right-0 h-28 z-0" />
+      
+      <div className="flex flex-1 pt-28 h-full overflow-hidden w-full">
         <aside className="hidden lg:flex h-full w-72 border-r border-border bg-secondary/30 flex-col p-5">
           <div className="mb-6">
             <h2 className="text-2xl font-heading text-foreground">Messages</h2>

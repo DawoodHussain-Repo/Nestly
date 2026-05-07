@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Urbanist } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { ConditionalNav } from '@/components/conditional-nav'
+import { ConditionalFooter } from '@/components/conditional-footer'
 import './globals.css'
 
 const urbanist = Urbanist({ 
@@ -41,8 +43,10 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased">
+      <body className="antialiased overflow-x-hidden">
+        <ConditionalNav />
         {children}
+        <ConditionalFooter />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
