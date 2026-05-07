@@ -5,130 +5,77 @@
 
 /* Design System Tokens */
 @theme {
-  /* ===== Color System (OKLCH for perceptual consistency) ===== */
+  /* ===== Colors ===== */
+  --color-primary: #b31c33;
+  --color-primary-dark: #b8333f;
+  --color-primary-light: #ed6b7d;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d63849;
+  --color-on-primary-container: #fffbff;
   
-  /* Primary Brand Colors */
-  --color-primary-50: oklch(0.97 0.02 15);
-  --color-primary-100: oklch(0.94 0.04 15);
-  --color-primary-200: oklch(0.88 0.08 15);
-  --color-primary-300: oklch(0.78 0.12 15);
-  --color-primary-400: oklch(0.68 0.16 15);
-  --color-primary-500: oklch(0.55 0.18 15);
-  --color-primary-600: oklch(0.48 0.16 15);
-  --color-primary-700: oklch(0.40 0.14 15);
-  --color-primary-800: oklch(0.32 0.12 15);
-  --color-primary-900: oklch(0.25 0.10 15);
+  --color-secondary: #5f5e5e;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e2dfde;
+  --color-on-secondary-container: #636262;
+  
+  --color-tertiary: #5e5c54;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #77746c;
+  --color-on-tertiary-container: #fffbff;
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  
+  --color-background: #faf9f9;
+  --color-on-background: #1b1c1c;
+  --color-surface: #faf9f9;
+  --color-on-surface: #1b1c1c;
+  --color-surface-dim: #dbdad9;
+  --color-surface-bright: #faf9f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f3;
+  --color-surface-container: #efeded;
+  --color-surface-container-high: #e9e8e8;
+  --color-surface-container-highest: #e3e2e2;
+  --color-on-surface-variant: #5a4040;
+  
+  --color-outline: #8e706f;
+  --color-outline-variant: #e2bebd;
+  --color-surface-tint: #b71f35;
+  --color-surface-variant: #e3e2e2;
+  --color-inverse-surface: #303031;
+  --color-inverse-on-surface: #f2f0f0;
+  --color-inverse-primary: #ffb3b3;
 
-  /* Secondary Colors */
-  --color-secondary-50: oklch(0.97 0.01 0);
-  --color-secondary-100: oklch(0.94 0.01 0);
-  --color-secondary-200: oklch(0.88 0.01 0);
-  --color-secondary-300: oklch(0.78 0.01 0);
-  --color-secondary-400: oklch(0.68 0.01 0);
-  --color-secondary-500: oklch(0.55 0.01 0);
-  --color-secondary-600: oklch(0.48 0.01 0);
-  --color-secondary-700: oklch(0.40 0.01 0);
-  --color-secondary-800: oklch(0.32 0.01 0);
-  --color-secondary-900: oklch(0.25 0.01 0);
+  --color-ink: #1a1a1a;
+  --color-stone-dark: #4a4a4a;
+  --color-stone-light: #888888;
+  --color-stone-lighter: #bbbbbb;
+  --color-linen: #f5f3f0;
 
-  /* Tertiary Colors */
-  --color-tertiary-50: oklch(0.97 0.01 80);
-  --color-tertiary-100: oklch(0.94 0.02 80);
-  --color-tertiary-200: oklch(0.88 0.03 80);
-  --color-tertiary-300: oklch(0.78 0.04 80);
-  --color-tertiary-400: oklch(0.68 0.05 80);
-  --color-tertiary-500: oklch(0.55 0.06 80);
-  --color-tertiary-600: oklch(0.48 0.05 80);
-  --color-tertiary-700: oklch(0.40 0.04 80);
-  --color-tertiary-800: oklch(0.32 0.03 80);
-  --color-tertiary-900: oklch(0.25 0.02 80);
-
-  /* Error/Danger Colors */
-  --color-error-50: oklch(0.97 0.02 27);
-  --color-error-100: oklch(0.94 0.04 27);
-  --color-error-200: oklch(0.88 0.08 27);
-  --color-error-300: oklch(0.78 0.12 27);
-  --color-error-400: oklch(0.68 0.16 27);
-  --color-error-500: oklch(0.60 0.22 27);
-  --color-error-600: oklch(0.52 0.20 27);
-  --color-error-700: oklch(0.44 0.18 27);
-  --color-error-800: oklch(0.36 0.16 27);
-  --color-error-900: oklch(0.28 0.14 27);
-
-  /* Semantic Color Tokens */
-  --color-primary: var(--color-primary-500);
-  --color-on-primary: oklch(1 0 0);
-  --color-primary-container: var(--color-primary-600);
-  --color-on-primary-container: oklch(1 0 0);
-  
-  --color-secondary: var(--color-secondary-500);
-  --color-on-secondary: oklch(1 0 0);
-  --color-secondary-container: var(--color-secondary-200);
-  --color-on-secondary-container: var(--color-secondary-900);
-  
-  --color-tertiary: var(--color-tertiary-500);
-  --color-on-tertiary: oklch(1 0 0);
-  --color-tertiary-container: var(--color-tertiary-700);
-  --color-on-tertiary-container: oklch(1 0 0);
-  
-  --color-error: var(--color-error-500);
-  --color-on-error: oklch(1 0 0);
-  --color-error-container: var(--color-error-100);
-  --color-on-error-container: var(--color-error-900);
-  
-  /* Surface Colors */
-  --color-background: oklch(0.98 0 0);
-  --color-on-background: oklch(0.15 0 0);
-  --color-surface: oklch(0.98 0 0);
-  --color-on-surface: oklch(0.15 0 0);
-  --color-surface-dim: oklch(0.88 0 0);
-  --color-surface-bright: oklch(0.98 0 0);
-  --color-surface-container-lowest: oklch(1 0 0);
-  --color-surface-container-low: oklch(0.96 0 0);
-  --color-surface-container: oklch(0.94 0 0);
-  --color-surface-container-high: oklch(0.92 0 0);
-  --color-surface-container-highest: oklch(0.90 0 0);
-  --color-on-surface-variant: oklch(0.45 0.01 15);
-  
-  /* Outline Colors */
-  --color-outline: oklch(0.60 0.01 15);
-  --color-outline-variant: oklch(0.85 0.01 15);
-  
-  /* Inverse Colors */
-  --color-inverse-surface: oklch(0.20 0 0);
-  --color-inverse-on-surface: oklch(0.95 0 0);
-  --color-inverse-primary: oklch(0.75 0.16 15);
-
-  /* Extended Palette */
-  --color-primary-dark: oklch(0.48 0.16 15);
-  --color-primary-light: oklch(0.68 0.16 15);
-  --color-ink: oklch(0.15 0 0);
-  --color-stone-dark: oklch(0.35 0 0);
-  --color-stone-light: oklch(0.60 0 0);
-  --color-stone-lighter: oklch(0.75 0 0);
-  --color-linen: oklch(0.96 0.01 80);
-
-  /* shadcn/ui Compatible Tokens */
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.15 0 0);
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.15 0 0);
-  --color-muted: oklch(0.94 0 0);
-  --color-muted-foreground: oklch(0.45 0.01 15);
-  --color-accent: oklch(0.92 0 0);
-  --color-accent-foreground: oklch(0.15 0 0);
-  --color-destructive: var(--color-error-500);
-  --color-destructive-foreground: oklch(1 0 0);
-  --color-border: var(--color-outline-variant);
-  --color-input: oklch(0.94 0 0);
-  --color-ring: var(--color-primary);
+  /* shadcn/ui Compatible */
+  --color-card: #ffffff;
+  --color-card-foreground: #1b1c1c;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1b1c1c;
+  --color-muted: #efeded;
+  --color-muted-foreground: #5a4040;
+  --color-accent: #e9e8e8;
+  --color-accent-foreground: #1b1c1c;
+  --color-destructive: #ba1a1a;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2bebd;
+  --color-input: #efeded;
+  --color-ring: #b31c33;
 
   /* ===== Typography ===== */
   --font-sans: 'Public Sans', system-ui, -apple-system, sans-serif;
   --font-serif: 'Noto Serif', 'Georgia', serif;
   --font-mono: 'Geist Mono', 'Courier New', monospace;
 
-  /* ===== Spacing Scale ===== */
+  /* ===== Spacing ===== */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -139,6 +86,7 @@
   --spacing-4xl: 6rem;
 
   /* ===== Border Radius ===== */
+  --radius: 0.625rem;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
@@ -151,49 +99,48 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-
-  /* ===== Transitions ===== */
-  --transition-fast: 150ms;
-  --transition-base: 200ms;
-  --transition-slow: 300ms;
 }
 
 /* Dark Mode Overrides */
 .dark {
-  --color-background: oklch(0.15 0 0);
-  --color-on-background: oklch(0.95 0 0);
-  --color-surface: oklch(0.15 0 0);
-  --color-on-surface: oklch(0.95 0 0);
-  --color-surface-dim: oklch(0.12 0 0);
-  --color-surface-bright: oklch(0.25 0 0);
-  --color-surface-container-lowest: oklch(0.10 0 0);
-  --color-surface-container-low: oklch(0.13 0 0);
-  --color-surface-container: oklch(0.16 0 0);
-  --color-surface-container-high: oklch(0.19 0 0);
-  --color-surface-container-highest: oklch(0.22 0 0);
-  --color-on-surface-variant: oklch(0.75 0.01 15);
+  --color-background: #1b1c1c;
+  --color-on-background: #faf9f9;
+  --color-surface: #1b1c1c;
+  --color-on-surface: #faf9f9;
+  --color-surface-dim: #121212;
+  --color-surface-bright: #2a2a2a;
+  --color-surface-container-lowest: #0f0f0f;
+  --color-surface-container-low: #1b1c1c;
+  --color-surface-container: #1f1f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353535;
+  --color-on-surface-variant: #d7c1c0;
   
-  --color-outline: oklch(0.50 0.01 15);
-  --color-outline-variant: oklch(0.30 0.01 15);
+  --color-outline: #a08c8b;
+  --color-outline-variant: #524341;
   
-  --color-inverse-surface: oklch(0.95 0 0);
-  --color-inverse-on-surface: oklch(0.20 0 0);
-  --color-inverse-primary: var(--color-primary-500);
+  --color-inverse-surface: #e6e1e1;
+  --color-inverse-on-surface: #313030;
+  --color-inverse-primary: #b31c33;
 
-  --color-card: oklch(0.16 0 0);
-  --color-card-foreground: oklch(0.95 0 0);
-  --color-popover: oklch(0.16 0 0);
-  --color-popover-foreground: oklch(0.95 0 0);
-  --color-muted: oklch(0.19 0 0);
-  --color-muted-foreground: oklch(0.75 0.01 15);
-  --color-accent: oklch(0.22 0 0);
-  --color-accent-foreground: oklch(0.95 0 0);
-  --color-border: var(--color-outline-variant);
-  --color-input: oklch(0.19 0 0);
+  --color-card: #1f1f1f;
+  --color-card-foreground: #faf9f9;
+  --color-popover: #1f1f1f;
+  --color-popover-foreground: #faf9f9;
+  --color-muted: #2a2a2a;
+  --color-muted-foreground: #d7c1c0;
+  --color-accent: #353535;
+  --color-accent-foreground: #faf9f9;
+  --color-border: #524341;
+  --color-input: #2a2a2a;
 }
 
 /* ===== Base Styles ===== */
 @layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-on-background);
@@ -317,7 +264,8 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 500;
-  transition: background-color var(--transition-base);
+  transition: background-color 200ms;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -336,7 +284,8 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 500;
-  transition: background-color var(--transition-base);
+  transition: background-color 200ms;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {
@@ -356,7 +305,8 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 500;
-  transition: background-color var(--transition-base);
+  transition: background-color 200ms;
+  cursor: pointer;
 }
 
 .btn-outlined:hover {
@@ -376,7 +326,7 @@
   border: 1px solid var(--color-outline-variant);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-slow);
+  transition: box-shadow 300ms;
 }
 
 .card:hover {
@@ -399,13 +349,13 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.5;
-  transition: all var(--transition-base);
+  transition: all 200ms;
 }
 
 .input-base:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.15);
+  box-shadow: 0 0 0 3px rgba(179, 28, 51, 0.15);
 }
 
 .input-base::placeholder {
