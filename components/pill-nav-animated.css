@@ -112,6 +112,24 @@
   box-shadow: 0 4px 12px rgba(179, 28, 51, 0.3);
 }
 
+.pill-dark {
+  background: #1A1A1A;
+  color: #FFFFFF;
+}
+
+.pill-dark:hover {
+  background: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pill-dark .hover-circle {
+  background: #FFFFFF;
+}
+
+.pill-dark .pill-label-hover {
+  color: #1A1A1A;
+}
+
 .pill .hover-circle {
   position: absolute;
   left: 50%;
@@ -257,4 +275,12 @@
 
 .mobile-menu-popover .mobile-menu-link.is-active {
   box-shadow: 0 0 0 3px rgba(179, 28, 51, 0.2);
+}
+
+.mobile-menu-popover .mobile-menu-link-dark {
+  background-color: #1A1A1A;
+}
+
+.mobile-menu-popover .mobile-menu-link-dark:hover {
+  background-color: #000000;
 }

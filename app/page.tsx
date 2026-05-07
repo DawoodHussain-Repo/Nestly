@@ -297,7 +297,7 @@ export default function Home() {
 
                 {/* Location Dropdown */}
                 {showLocationDropdown && (
-                  <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-50 p-6">
+                  <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100] p-6">
                     <input
                       type="text"
                       value={searchQuery}
@@ -357,7 +357,7 @@ export default function Home() {
 
                 {/* Date Dropdown */}
                 {showDateDropdown && (
-                  <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-50">
+                  <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100]">
                     <Calendar
                       onSelectDate={(date) => {
                         setSelectedDate(date);
@@ -391,7 +391,7 @@ export default function Home() {
 
                 {/* Guests Dropdown */}
                 {showGuestsDropdown && (
-                  <div className="absolute top-full right-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-50 p-8">
+                  <div className="absolute top-full right-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100] p-8">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-foreground text-lg">Guests</p>
@@ -430,10 +430,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Fixed Category Bar */}
-        <div className="sticky top-28 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-          <div className="max-w-7xl mx-auto px-6 py-6">
-            <div className="flex gap-10 overflow-x-auto scrollbar-hide items-center">
+        {/* Category Bar */}
+        <div className="bg-background border-b border-border">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 const active = selectedCategory === cat.id;
@@ -441,16 +441,16 @@ export default function Home() {
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`flex flex-col items-center gap-2 min-w-[72px] pb-3 transition-all border-b-3 ${
+                    className={`flex flex-col items-center gap-3 min-w-[80px] transition-all ${
                       active
-                        ? "opacity-100 border-primary text-primary scale-105"
-                        : "opacity-60 border-transparent text-muted-foreground hover:opacity-100 hover:scale-105"
+                        ? "opacity-100 text-primary scale-105"
+                        : "opacity-70 text-muted-foreground hover:opacity-100 hover:scale-105"
                     }`}
                   >
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                      active ? 'bg-primary/10' : 'bg-secondary/50 hover:bg-secondary'
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                      active ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-secondary/70 hover:bg-secondary'
                     }`}>
-                      <Icon className="h-6 w-6" />
+                      <Icon className="h-7 w-7" />
                     </div>
                     <span className="text-xs font-semibold whitespace-nowrap">{cat.name}</span>
                   </button>

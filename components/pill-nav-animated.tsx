@@ -4,12 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
+import { Home, List, HelpCircle, MessageSquare, LogIn, UserPlus } from 'lucide-react';
 import './pill-nav-animated.css';
 
 interface PillNavItem {
   label: string;
   href: string;
   ariaLabel?: string;
+  icon?: string;
+  variant?: 'default' | 'dark';
 }
 
 interface PillNavProps {
@@ -23,12 +26,21 @@ interface PillNavProps {
   initialLoadAnimation?: boolean;
 }
 
+const iconMap = {
+  home: Home,
+  list: List,
+  help: HelpCircle,
+  message: MessageSquare,
+  login: LogIn,
+  'user-plus': UserPlus,
+};
+
 export function PillNavAnimated({
   items,
   className = '',
   ease = 'power3.easeOut',
-  baseColor = '#FFFAF0', // Your background color
-  pillColor = '#B31C33', // Your primary color
+  baseColor = '#FFFAF0',
+  pillColor = '#B31C33',
   hoveredPillTextColor = '#FFFAF0',
   pillTextColor,
   initialLoadAnimation = true
@@ -210,32 +222,40 @@ export function PillNavAnimated({
 
         <div className="pill-nav-items desktop-only" ref={navItemsRef}>
           <ul className="pill-list" role="menubar">
-            {items.map((item, i) => (
-              <li key={item.href || `item-${i}`} role="none">
-                <Link
-                  role="menuitem"
-                  href={item.href}
-                  className={`pill${pathname === item.href ? ' is-active' : ''}`}
-                  aria-label={item.ariaLabel || item.label}
-                  onMouseEnter={() => handleEnter(i)}
-                  onMouseLeave={() => handleLeave(i)}
-                >
-                  <span
-                    className="hover-circle"
-                    aria-hidden="true"
-                    ref={el => {
-                      circleRefs.current[i] = el;
-                    }}
-                  />
-                  <span className="label-stack">
-                    <span className="pill-label">{item.label}</span>
-                    <span className="pill-label-hover" aria-hidden="true">
-                      {item.label}
+            {items.map((item, i) => {
+              const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : null;
+              const isDark = item.variant === 'dark';
+              return (
+                <li key={item.href || `item-${i}`} role="none">
+                  <Link
+                    role="menuitem"
+                    href={item.href}
+                    className={`pill${pathname === item.href ? ' is-active' : ''}${isDark ? ' pill-dark' : ''}`}
+                    aria-label={item.ariaLabel || item.label}
+                    onMouseEnter={() => handleEnter(i)}
+                    onMouseLeave={() => handleLeave(i)}
+                  >
+                    <span
+                      className="hover-circle"
+                      aria-hidden="true"
+                      ref={el => {
+                        circleRefs.current[i] = el;
+                      }}
+                    />
+                    <span className="label-stack">
+                      <span className="pill-label">
+                        {Icon && <Icon className="inline-block w-4 h-4 mr-1.5" />}
+                        {item.label}
+                      </span>
+                      <span className="pill-label-hover" aria-hidden="true">
+                        {Icon && <Icon className="inline-block w-4 h-4 mr-1.5" />}
+                        {item.label}
+                      </span>
                     </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -252,17 +272,22 @@ export function PillNavAnimated({
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
         <ul className="mobile-menu-list">
-          {items.map((item, i) => (
-            <li key={item.href || `mobile-item-${i}`}>
-              <Link
-                href={item.href}
-                className={`mobile-menu-link${pathname === item.href ? ' is-active' : ''}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
+          {items.map((item, i) => {
+            const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : null;
+            const isDark = item.variant === 'dark';
+            return (
+              <li key={item.href || `mobile-item-${i}`}>
+                <Link
+                  href={item.href}
+                  className={`mobile-menu-link${pathname === item.href ? ' is-active' : ''}${isDark ? ' mobile-menu-link-dark' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {Icon && <Icon className="inline-block w-4 h-4 mr-2" />}
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

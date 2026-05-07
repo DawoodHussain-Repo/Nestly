@@ -10,12 +10,12 @@ export function ConditionalNav() {
   if (hideNav) return null;
 
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Listings", href: "/listings" },
-    { label: "How it Works", href: "/how-it-works" },
-    { label: "Messages", href: "/messages" },
-    { label: "Sign In", href: "/signin" },
-    { label: "Sign Up", href: "/signup" },
+    { label: "Home", href: "/", icon: "home" },
+    { label: "Listings", href: "/listings", icon: "list" },
+    { label: "How it Works", href: "/how-it-works", icon: "help" },
+    { label: "Messages", href: "/messages", icon: "message" },
+    { label: "Sign In", href: "/signin", icon: "login", variant: "dark" as const },
+    { label: "Sign Up", href: "/signup", icon: "user-plus", variant: "dark" as const },
   ];
   
   return (
