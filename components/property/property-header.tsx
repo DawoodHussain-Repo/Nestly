@@ -11,31 +11,31 @@ interface PropertyHeaderProps {
 export function PropertyHeader({ title, location, rating, reviews, type }: PropertyHeaderProps) {
   return (
     <div className="mb-8">
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-3">
         <div>
-          <h1 className="text-4xl font-heading font-bold mb-2">{title}</h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin size={18} />
-            <span className="text-lg">{location}</span>
+          <h1 className="text-3xl font-heading font-bold mb-1.5 tracking-tight">{title}</h1>
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <MapPin size={15} />
+            <span className="text-sm">{location}</span>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button className="p-3 border border-border rounded-full hover:bg-secondary transition-colors">
-            <Share2 size={18} />
+        <div className="flex gap-1.5">
+          <button className="p-2.5 border border-border/60 rounded-full hover:bg-secondary/50 transition-colors">
+            <Share2 size={15} />
           </button>
-          <button className="p-3 border border-border rounded-full hover:bg-secondary transition-colors">
-            <Heart size={18} />
+          <button className="p-2.5 border border-border/60 rounded-full hover:bg-secondary/50 transition-colors">
+            <Heart size={15} />
           </button>
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2">
-          <Star size={18} className="fill-primary text-primary" />
-          <span className="font-semibold">{rating}</span>
-          <span className="text-muted-foreground">({reviews} reviews)</span>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <Star size={14} className="fill-amber-400 text-amber-400" />
+          <span className="text-sm font-semibold">{rating}</span>
+          <span className="text-sm text-muted-foreground">({reviews} reviews)</span>
         </div>
-        <span className="px-4 py-1.5 bg-secondary rounded-full text-sm font-medium capitalize">
+        <span className="px-3 py-1 bg-secondary/60 rounded-full text-xs font-semibold capitalize text-foreground">
           {type}
         </span>
       </div>

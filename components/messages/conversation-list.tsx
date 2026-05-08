@@ -21,6 +21,28 @@ interface ConversationListProps {
   isArchived: (id: string) => boolean;
 }
 
+/**
+ * Deduplicate messages by senderId — keep only the latest message per unique sender.
+ * This prevents the same user from appearing multiple times in the conversation list.
+ */
+function deduplicateBySender(messages: Message[]): Message[] {
+  const seen = new Map<string, Message>();
+
+  // Sort by timestamp descending so we keep the most recent message per sender
+  const sorted = [...messages].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
+  for (const msg of sorted) {
+    if (!seen.has(msg.senderId)) {
+      seen.set(msg.senderId, msg);
+    }
+  }
+
+  // Return in the same order (most recent first)
+  return Array.from(seen.values());
+}
+
 export function ConversationList({
   conversations,
   selectedConversation,
@@ -38,6 +60,9 @@ export function ConversationList({
   isRead,
   isArchived,
 }: ConversationListProps) {
+  // Deduplicate so each sender appears only once
+  const uniqueConversations = deduplicateBySender(conversations);
+
   return (
     <>
       <div className="p-5 border-b border-border space-y-3">
@@ -70,8 +95,8 @@ export function ConversationList({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        {conversations.length === 0 ? (
+      <div className="flex-1 overflow-y-auto scroll-styled">
+        {uniqueConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full p-8 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
               {activeTab === 'archive' ? (
@@ -85,7 +110,7 @@ export function ConversationList({
             </p>
           </div>
         ) : (
-          conversations.map((conversation) => (
+          uniqueConversations.map((conversation) => (
             <div key={conversation.id} className="relative group">
               <MessageListItem
                 message={{
@@ -120,14 +145,14 @@ export function ConversationList({
                     )}
                   </button>
                   <button
-                    onClick={() => onArchive(conversation.senderId)}
+                    onClick={() => onArchive(conversation.id)}
                     className="w-full px-4 py-2 text-left hover:bg-secondary transition-colors flex items-center gap-2 text-sm"
                   >
                     <Archive className="h-4 w-4" />
-                    {isArchived(conversation.senderId) ? 'Unarchive' : 'Archive'}
+                    {isArchived(conversation.id) ? 'Unarchive' : 'Archive'}
                   </button>
                   <button
-                    onClick={() => onDelete(conversation.senderId)}
+                    onClick={() => onDelete(conversation.id)}
                     className="w-full px-4 py-2 text-left hover:bg-destructive/10 text-destructive transition-colors flex items-center gap-2 text-sm"
                   >
                     <Trash2 className="h-4 w-4" />

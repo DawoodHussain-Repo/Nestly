@@ -9,6 +9,7 @@ import {
   TreePine,
   Waves,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const categories = [
   { id: "all", name: "All", icon: Building2, filter: null },
@@ -28,9 +29,9 @@ interface CategoryBarProps {
 
 export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarProps) {
   return (
-    <div className="relative bg-background border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex gap-8 overflow-x-auto scrollbar-hide items-center">
+    <div className="relative bg-background border-b border-border/60">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="flex justify-center gap-2 sm:gap-4 flex-wrap">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const active = selectedCategory === cat.id;
@@ -38,18 +39,19 @@ export function CategoryBar({ selectedCategory, onSelectCategory }: CategoryBarP
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`flex flex-col items-center gap-3 min-w-[80px] transition-all flex-shrink-0 py-2 ${
+                className={cn(
+                  'flex items-center gap-2.5 px-5 py-3 rounded-full transition-all duration-200 border',
+                  'text-sm font-medium whitespace-nowrap',
                   active
-                    ? "opacity-100 text-primary"
-                    : "opacity-70 text-muted-foreground hover:opacity-100"
-                }`}
+                    ? 'bg-foreground text-background border-foreground shadow-lg'
+                    : 'bg-transparent text-muted-foreground border-border/80 hover:border-foreground/30 hover:text-foreground hover:bg-secondary/50'
+                )}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform ${
-                  active ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-secondary/70 hover:bg-secondary'
-                }`}>
-                  <Icon className={`h-7 w-7 transition-transform ${active ? 'scale-105' : 'hover:scale-105'}`} />
-                </div>
-                <span className="text-xs font-semibold whitespace-nowrap">{cat.name}</span>
+                <Icon className={cn(
+                  'h-4 w-4 flex-shrink-0 transition-colors',
+                  active ? 'text-background' : 'text-muted-foreground'
+                )} />
+                <span>{cat.name}</span>
               </button>
             );
           })}

@@ -3,6 +3,8 @@ import { Urbanist } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/contexts/auth-context'
+import { ThemeProvider } from '@/components/theme-provider'
+import { LampToggle } from '@/components/lamp-toggle'
 import './globals.css'
 
 const urbanist = Urbanist({ 
@@ -10,6 +12,12 @@ const urbanist = Urbanist({
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-urbanist',
 })
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 export const metadata: Metadata = {
   title: 'Nestly - Find Your Perfect Stay',
@@ -39,16 +47,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={urbanist.variable}>
+    <html lang="en" className={urbanist.variable} suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased overflow-x-hidden">
-        <AuthProvider>
-          {children}
-          <Toaster position="top-center" richColors />
-        </AuthProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+      <body className="antialiased overflow-x-hidden m-0 p-0 min-h-screen">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <LampToggle />
+            {children}
+            <Toaster position="top-center" richColors />
+          </AuthProvider>
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ThemeProvider>
       </body>
     </html>
   )

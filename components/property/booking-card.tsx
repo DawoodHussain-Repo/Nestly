@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
@@ -102,46 +102,49 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
   };
 
   return (
-    <div className="sticky top-32 border border-border rounded-2xl p-6 shadow-lg bg-card">
+    <div className="sticky top-32 border border-border/60 rounded-2xl p-6 shadow-sm bg-card">
+      {/* Price & Rating */}
       <div className="mb-6">
-        <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-3xl font-heading font-bold">${price}</span>
-          <span className="text-muted-foreground">/ night</span>
+        <div className="flex items-baseline gap-1.5 mb-2">
+          <span className="text-2xl font-heading font-bold tracking-tight">${price}</span>
+          <span className="text-sm text-muted-foreground">/ night</span>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Star size={14} className="fill-primary text-primary" />
+        <div className="flex items-center gap-1.5 text-sm">
+          <Star size={13} className="fill-amber-400 text-amber-400" />
           <span className="font-semibold">{rating}</span>
-          <span className="text-muted-foreground">({reviews} reviews)</span>
+          <span className="text-muted-foreground">·</span>
+          <span className="text-muted-foreground">{reviews} reviews</span>
         </div>
       </div>
 
-      <div className="space-y-4 mb-6">
+      {/* Form */}
+      <div className="space-y-3 mb-5">
         <div>
-          <label className="text-sm font-medium mb-2 block">Check-in</label>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Check-in</label>
           <input
             type="date"
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
           />
         </div>
         <div>
-          <label className="text-sm font-medium mb-2 block">Check-out</label>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Check-out</label>
           <input
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
             min={checkIn || new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
           />
         </div>
         <div>
-          <label className="text-sm font-medium mb-2 block">Guests</label>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Guests</label>
           <select 
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
-            className="w-full px-4 py-3 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
           >
             {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
@@ -153,28 +156,31 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
       </div>
 
       <Button 
-        className="w-full py-6 text-base rounded-xl" 
+        className="w-full py-5 text-sm rounded-xl font-semibold" 
         onClick={handleReserve}
         disabled={bookingLoading || !checkIn || !checkOut}
       >
         {bookingLoading ? "Processing..." : "Reserve Now"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground mt-4">
-        {user ? "You won't be charged yet" : "Sign in to make a reservation"}
-      </p>
+      <div className="flex items-center justify-center gap-1.5 mt-3">
+        <Shield size={12} className="text-muted-foreground" />
+        <p className="text-center text-xs text-muted-foreground">
+          {user ? "You won't be charged yet" : "Sign in to make a reservation"}
+        </p>
+      </div>
 
       {nights > 0 && (
-        <div className="mt-6 pt-6 border-t border-border space-y-3">
+        <div className="mt-5 pt-5 border-t border-border/50 space-y-2.5">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">${price} × {nights} {nights === 1 ? 'night' : 'nights'}</span>
-            <span>${totalPrice}</span>
+            <span className="font-medium">${totalPrice}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Service fee (10%)</span>
-            <span>${serviceFee}</span>
+            <span className="font-medium">${serviceFee}</span>
           </div>
-          <div className="flex justify-between font-semibold pt-3 border-t border-border text-lg">
+          <div className="flex justify-between font-bold pt-2.5 border-t border-border/50">
             <span>Total</span>
             <span>${grandTotal}</span>
           </div>

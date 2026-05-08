@@ -100,37 +100,83 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
   html {
-    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   body {
     @apply bg-background text-foreground font-sans;
-    width: 100vw;
+    max-width: 100%;
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
   }
 }
 
-/* Custom scrollbar */
+/* ────────────────────────────────────────────────────
+   Premium Scrollbar — Minimal & Refined
+   ──────────────────────────────────────────────────── */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+/* Webkit (Chrome, Edge, Safari) — page-level */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 0; /* hide horizontal by default */
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--secondary));
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 3px;
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.5);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--primary) / 0.7);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* ── Inner scroll regions (dropdowns, panels) ─── */
+.scroll-styled::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-styled::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.scroll-styled::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+
+.scroll-styled::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.4);
 }
 
 /* Selection */

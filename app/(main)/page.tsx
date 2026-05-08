@@ -7,7 +7,7 @@ import { CategoryBar, categories } from "@/components/home/category-bar";
 import { PropertyGrid } from "@/components/home/property-grid";
 import { HowItWorksSection } from "@/components/how-it-works/section";
 import { Property } from "@/types/property";
-import { useDebounce } from "@/hooks/useDebounce";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -95,19 +95,28 @@ export default function Home() {
           variant="cards"
         />
 
-        <section className="py-20 px-6 bg-primary">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-heading text-4xl md:text-5xl text-primary-foreground mb-6">
+        {/* CTA Section */}
+        <section className="py-20 px-6">
+          <div className="max-w-4xl mx-auto text-center bg-foreground rounded-3xl px-8 py-16 md:py-20 relative overflow-hidden">
+            {/* Subtle decorative dots */}
+            <div className="absolute top-6 left-6 w-2 h-2 bg-background/10 rounded-full" />
+            <div className="absolute top-6 right-6 w-2 h-2 bg-background/10 rounded-full" />
+            <div className="absolute bottom-6 left-6 w-2 h-2 bg-background/10 rounded-full" />
+            <div className="absolute bottom-6 right-6 w-2 h-2 bg-background/10 rounded-full" />
+
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-background/40 mb-4">For property owners</p>
+            <h2 className="font-heading text-3xl md:text-4xl text-background font-bold mb-4">
               Become a Host
             </h2>
-            <p className="text-lg text-primary-foreground/90 mb-8">
+            <p className="text-base text-background/60 mb-8 max-w-md mx-auto">
               Earn extra income and welcome guests to unforgettable stays.
             </p>
             <Link 
               href="/signup" 
-              className="inline-flex rounded-full bg-background text-foreground px-8 py-3 font-medium hover:bg-background/90 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full bg-background text-foreground px-7 py-3 text-sm font-semibold hover:opacity-90 transition-opacity group"
             >
               Start Hosting
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </section>

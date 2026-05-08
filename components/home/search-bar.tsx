@@ -9,6 +9,7 @@ import {
   Search,
   Minus,
   Plus,
+  Users,
 } from "lucide-react";
 import { DatePicker } from "./date-picker";
 
@@ -26,6 +27,7 @@ const popularDestinations = [
 ];
 
 interface SearchBarProps {
+  /** Where to display. Both variants render identically — only max-width/margin differ. */
   variant?: 'hero' | 'compact';
 }
 
@@ -42,7 +44,6 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
   const dateRef = useRef<HTMLDivElement>(null);
   const guestsRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
@@ -62,31 +63,20 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    
-    if (searchQuery.trim()) {
-      params.set('search', searchQuery);
-    }
-    
-    if (selectedDate) {
-      params.set('date', selectedDate.toISOString());
-    }
-    
-    if (guests > 1) {
-      params.set('guests', guests.toString());
-    }
-    
+    if (searchQuery.trim()) params.set('search', searchQuery);
+    if (selectedDate) params.set('date', selectedDate.toISOString());
+    if (guests > 1) params.set('guests', guests.toString());
     router.push(`/listings${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  const isCompact = variant === 'compact';
+  const isHero = variant === 'hero';
 
   return (
-    <div className={`w-full ${isCompact ? 'max-w-full' : 'max-w-5xl mt-12'} bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch ${isCompact ? 'p-2' : 'p-3'} relative backdrop-blur-sm overflow-visible`}>
-      {/* Location */}
+    <div className={`w-full ${isHero ? 'max-w-5xl mt-10' : 'max-w-full'} bg-background rounded-3xl shadow-2xl border border-border/50 flex flex-col md:flex-row items-stretch p-3 relative overflow-visible backdrop-blur-sm`}>
+      {/* ── Location ── */}
       <div className="flex-1 relative overflow-visible" ref={locationRef}>
         <button
           onClick={() => {
@@ -94,9 +84,9 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
             setShowDateDropdown(false);
             setShowGuestsDropdown(false);
           }}
-          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
+          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
         >
-          <MapPin className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
+          <MapPin className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-semibold text-foreground">Where</span>
             <span className="text-sm text-muted-foreground truncate">
@@ -105,7 +95,6 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
           </div>
         </button>
 
-        {/* Location Dropdown */}
         {showLocationDropdown && (
           <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100] p-6">
             <input
@@ -116,7 +105,7 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
               className="w-full px-5 py-4 border border-border rounded-2xl bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-4 text-base"
               autoFocus
             />
-            <div className="space-y-2 max-h-80 overflow-y-auto">
+            <div className="space-y-2 max-h-80 overflow-y-auto scroll-styled">
               <p className="text-xs font-semibold text-muted-foreground px-3 mb-3 uppercase tracking-wide">
                 {searchQuery ? 'Matching destinations' : 'Popular destinations'}
               </p>
@@ -152,7 +141,7 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
 
       <div className="hidden md:block w-px h-12 bg-border self-center" />
 
-      {/* Dates */}
+      {/* ── Dates ── */}
       <div className="flex-1 relative overflow-visible" ref={dateRef}>
         <button
           onClick={() => {
@@ -160,9 +149,9 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
             setShowLocationDropdown(false);
             setShowGuestsDropdown(false);
           }}
-          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
+          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
         >
-          <CalendarIcon className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
+          <CalendarIcon className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-foreground">Dates</span>
             <span className="text-sm text-muted-foreground">
@@ -171,7 +160,6 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
           </div>
         </button>
 
-        {/* Date Dropdown */}
         {showDateDropdown && (
           <div className="absolute top-full left-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100]">
             <DatePicker
@@ -186,7 +174,7 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
 
       <div className="hidden md:block w-px h-12 bg-border self-center" />
 
-      {/* Guests */}
+      {/* ── Guests ── */}
       <div className="flex-1 relative overflow-visible" ref={guestsRef}>
         <button
           onClick={() => {
@@ -194,9 +182,9 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
             setShowLocationDropdown(false);
             setShowDateDropdown(false);
           }}
-          className={`flex items-center ${isCompact ? 'px-4 py-3' : 'px-8 py-5'} w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group`}
+          className="flex items-center px-8 py-5 w-full gap-4 hover:bg-secondary/50 rounded-2xl transition-all text-left group"
         >
-          <Search className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} text-primary flex-shrink-0 group-hover:scale-110 transition-transform`} />
+          <Users className="h-6 w-6 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-foreground">Guests</span>
             <span className="text-sm text-muted-foreground">
@@ -205,7 +193,6 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
           </div>
         </button>
 
-        {/* Guests Dropdown */}
         {showGuestsDropdown && (
           <div className="absolute top-full right-0 mt-3 w-96 bg-background border border-border rounded-3xl shadow-2xl z-[100] p-8">
             <div className="flex items-center justify-between">
@@ -235,12 +222,12 @@ export function SearchBar({ variant = 'hero' }: SearchBarProps) {
         )}
       </div>
 
-      {/* Search Button */}
+      {/* ── Search Button ── */}
       <button
         onClick={handleSearch}
-        className={`bg-primary text-primary-foreground ${isCompact ? 'w-12 h-12' : 'w-14 h-14'} rounded-2xl flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all shadow-lg ml-2 self-center group`}
+        className="bg-primary text-primary-foreground w-14 h-14 rounded-2xl flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all shadow-lg ml-2 self-center group"
       >
-        <Search className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} group-hover:scale-110 transition-transform`} />
+        <Search className="h-6 w-6 group-hover:scale-110 transition-transform" />
       </button>
     </div>
   );

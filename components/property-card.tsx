@@ -33,95 +33,123 @@ export function PropertyCard({
   const link = href ?? `/listings/${property.id}`
   const compact = variant === 'compact'
   const [imageError, setImageError] = useState(false)
+  const [liked, setLiked] = useState(false)
 
   return (
-    <Link href={link}>
-      <div className="overflow-hidden group cursor-pointer transition-all hover:shadow-2xl rounded-3xl border border-border bg-background hover:-translate-y-1 duration-300">
-        <div className={cn('relative overflow-hidden bg-muted', compact ? 'h-44' : 'h-56')}>
+    <Link href={link} className="block group">
+      <article className={cn(
+        'overflow-hidden rounded-2xl bg-card transition-all duration-300',
+        'border border-border/60',
+        'hover:shadow-[0_8px_30px_-8px_rgba(179,28,51,0.12)]',
+        'hover:-translate-y-1',
+      )}>
+        {/* Image Container */}
+        <div className={cn(
+          'relative overflow-hidden bg-muted',
+          compact ? 'aspect-[4/3]' : 'aspect-[16/11]'
+        )}>
           {property.image && !imageError ? (
             <Image
               src={property.image}
               alt={property.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               onError={() => setImageError(true)}
               unoptimized
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
-              <div className="text-center">
-                <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Property Image</p>
-              </div>
+            <div className="w-full h-full bg-gradient-to-br from-secondary via-muted to-secondary/60 flex items-center justify-center">
+              <Building2 className="h-10 w-10 text-muted-foreground/30" />
             </div>
           )}
+
+          {/* Gradient overlay at bottom for readability */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+
+          {/* Heart button */}
           <button
-            onClick={(e) => e.preventDefault()}
-            className="absolute top-4 right-4 p-2.5 bg-background/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110"
+            onClick={(e) => {
+              e.preventDefault()
+              setLiked(!liked)
+            }}
+            className={cn(
+              'absolute top-3 right-3 p-2 rounded-full transition-all duration-200',
+              'backdrop-blur-md shadow-sm',
+              liked
+                ? 'bg-primary/90 text-white'
+                : 'bg-white/80 text-muted-foreground hover:bg-white hover:text-primary'
+            )}
           >
-            <Heart size={18} className="text-muted-foreground hover:text-primary transition-colors" />
+            <Heart size={16} className={cn(liked && 'fill-current')} />
           </button>
-          {property.type ? (
-            <Badge variant="secondary" className="absolute top-4 left-4 capitalize backdrop-blur-sm bg-background/90 shadow-md">
+
+          {/* Type badge */}
+          {property.type && (
+            <Badge
+              variant="secondary"
+              className="absolute bottom-3 left-3 capitalize backdrop-blur-md bg-white/85 text-foreground border-0 text-xs font-semibold shadow-sm"
+            >
               {property.type}
             </Badge>
-          ) : null}
+          )}
         </div>
 
-        <div className="p-6">
-          <div className="mb-4">
-            <h3 className="text-lg font-heading font-semibold mb-2 line-clamp-1 group-hover:text-primary transition-colors">{property.title}</h3>
-            <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-              <MapPin size={16} className="flex-shrink-0" />
-              <span className="line-clamp-1">{property.location}</span>
+        {/* Content */}
+        <div className={cn('p-4', !compact && 'p-5')}>
+          {/* Title & Location */}
+          <div className="mb-3">
+            <h3 className="text-[0.95rem] font-semibold leading-snug line-clamp-1 text-foreground group-hover:text-primary transition-colors duration-200">
+              {property.title}
+            </h3>
+            <div className="flex items-center gap-1 mt-1 text-muted-foreground">
+              <MapPin size={13} className="flex-shrink-0" />
+              <span className="text-[0.8rem] line-clamp-1">{property.location}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center gap-1">
-              <Star size={16} className="fill-primary text-primary" />
-              <span className="text-sm font-semibold">{property.rating}</span>
-            </div>
+          {/* Rating */}
+          <div className="flex items-center gap-1.5 mb-3">
+            <Star size={13} className="fill-amber-400 text-amber-400" />
+            <span className="text-sm font-semibold text-foreground">{property.rating}</span>
             {property.reviews ? (
-              <span className="text-sm text-muted-foreground">({property.reviews} reviews)</span>
+              <span className="text-xs text-muted-foreground">({property.reviews})</span>
             ) : null}
           </div>
 
-          {!compact && (property.bedrooms || property.bathrooms || property.guests) ? (
-            <div className="flex gap-3 mb-4 pb-4 border-t border-border pt-4">
+          {/* Stats — only in default variant */}
+          {!compact && (property.bedrooms || property.bathrooms || property.guests) && (
+            <div className="flex items-center gap-3 mb-3 pt-3 border-t border-border/50">
               {property.bedrooms ? (
-                <div className="flex items-center gap-2 px-3 py-2 bg-secondary/50 rounded-full">
-                  <Bed size={16} className="text-primary" />
-                  <span className="text-sm font-medium">{property.bedrooms}</span>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Bed size={14} />
+                  <span className="text-xs font-medium">{property.bedrooms}</span>
                 </div>
               ) : null}
               {property.bathrooms ? (
-                <div className="flex items-center gap-2 px-3 py-2 bg-secondary/50 rounded-full">
-                  <Bath size={16} className="text-primary" />
-                  <span className="text-sm font-medium">{property.bathrooms}</span>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Bath size={14} />
+                  <span className="text-xs font-medium">{property.bathrooms}</span>
                 </div>
               ) : null}
               {property.guests ? (
-                <div className="flex items-center gap-2 px-3 py-2 bg-secondary/50 rounded-full">
-                  <Users size={16} className="text-primary" />
-                  <span className="text-sm font-medium">{property.guests}</span>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Users size={14} />
+                  <span className="text-xs font-medium">{property.guests}</span>
                 </div>
               ) : null}
             </div>
-          ) : null}
+          )}
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">From</p>
-              <p className="text-xl font-heading font-bold">${property.price}<span className="text-sm font-normal text-muted-foreground">/night</span></p>
-            </div>
-            <div className="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium group-hover:bg-primary/90 transition-colors">
-              View
-            </div>
+          {/* Price */}
+          <div className="flex items-baseline justify-between pt-2">
+            <p className="text-lg font-bold text-foreground tracking-tight">
+              ${property.price}
+              <span className="text-xs font-normal text-muted-foreground ml-0.5">/night</span>
+            </p>
           </div>
         </div>
-      </div>
+      </article>
     </Link>
   )
 }

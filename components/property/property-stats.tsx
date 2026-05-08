@@ -7,29 +7,23 @@ interface PropertyStatsProps {
 }
 
 export function PropertyStats({ bedrooms, bathrooms, guests }: PropertyStatsProps) {
+  const stats = [
+    { icon: Bed, label: "Bedrooms", value: bedrooms },
+    { icon: Bath, label: "Bathrooms", value: bathrooms },
+    { icon: Users, label: "Guests", value: guests },
+  ];
+
   return (
-    <div className="flex gap-6 mb-8 pb-8 border-b border-border">
-      <div className="flex items-center gap-3 px-4 py-3 bg-secondary rounded-xl">
-        <Bed size={20} className="text-primary" />
-        <div>
-          <p className="text-sm text-muted-foreground">Bedrooms</p>
-          <p className="font-semibold">{bedrooms}</p>
+    <div className="flex gap-4 mb-8 pb-8 border-b border-border/50">
+      {stats.map(({ icon: Icon, label, value }) => (
+        <div key={label} className="flex items-center gap-3 px-5 py-3.5 bg-secondary/40 rounded-xl border border-border/30">
+          <Icon size={18} className="text-primary" />
+          <div>
+            <p className="text-[0.65rem] text-muted-foreground uppercase tracking-wider font-medium">{label}</p>
+            <p className="text-sm font-bold text-foreground">{value}</p>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-3 px-4 py-3 bg-secondary rounded-xl">
-        <Bath size={20} className="text-primary" />
-        <div>
-          <p className="text-sm text-muted-foreground">Bathrooms</p>
-          <p className="font-semibold">{bathrooms}</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3 px-4 py-3 bg-secondary rounded-xl">
-        <Users size={20} className="text-primary" />
-        <div>
-          <p className="text-sm text-muted-foreground">Guests</p>
-          <p className="font-semibold">{guests}</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

@@ -160,11 +160,11 @@ export default function MessagesPage() {
             <button
               onClick={() => {
                 if (activeMessage) {
-                  handleArchive(activeMessage.senderId);
+                  handleArchive(activeMessage.id);
                 }
               }}
               className="p-2 hover:bg-secondary rounded-full transition-colors"
-              title={activeMessage && isArchived(activeMessage.senderId) ? "Unarchive" : "Archive"}
+              title={activeMessage && isArchived(activeMessage.id) ? "Unarchive" : "Archive"}
             >
               <Archive className="h-5 w-5" />
             </button>
