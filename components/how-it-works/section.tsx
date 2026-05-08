@@ -2,6 +2,7 @@ import { HowItWorksTimeline, type TimelineStep } from '@/components/how-it-works
 import { Container, Stack } from '@/components/ui/layout'
 import { cn } from '@/lib/utils'
 import { Compass, CalendarCheck, Key, ArrowRight } from 'lucide-react'
+import { IconBox } from '@/components/ui/icon-box'
 
 interface HowItWorksSectionProps {
   title?: string
@@ -65,9 +66,10 @@ export function HowItWorksSection({
                         {/* Icon & Chapter Badge */}
                         <div className="relative z-10 flex items-center justify-between mb-10">
                           {/* Pill-shaped icon container */}
-                          <div className="w-20 h-12 shrink-0 rounded-full flex items-center justify-center bg-primary/10 transition-transform duration-500 group-hover:scale-105">
-                            <Icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
-                          </div>
+                          <IconBox 
+                            icon={Icon} 
+                            className="w-20 h-12 transition-transform duration-500 group-hover:scale-105" 
+                          />
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                               Chapter

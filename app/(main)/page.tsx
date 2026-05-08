@@ -8,33 +8,16 @@ import { PropertyGrid } from "@/components/home/property-grid";
 import { HowItWorksSection } from "@/components/how-it-works/section";
 import { Property } from "@/types/property";
 import { ArrowRight } from "lucide-react";
+import { useProperties } from "@/hooks/use-api";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch properties from API
-  useEffect(() => {
-    async function fetchProperties() {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/listings');
-        const data = await response.json();
-        if (data.success) {
-          setProperties(data.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch properties:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProperties();
-  }, []);
+  const { data: properties, loading, error, refetch } = useProperties();
 
   // Filter properties by category
-  const filteredListings = properties.filter((p) => {
+  const filteredListings = (properties || []).filter((p) => {
     const categoryFilter = categories.find(c => c.id === selectedCategory);
     const matchesCategory = !categoryFilter?.filter || p.type === categoryFilter.filter;
     return matchesCategory;
@@ -53,6 +36,20 @@ export default function Home() {
     setSelectedCategory("all");
   };
 
+  if (error) {
+    return (
+      <div className="bg-background text-foreground min-h-screen flex flex-col antialiased">
+        <div className="h-28" />
+        <main className="flex-grow">
+          <ErrorState 
+            message={error}
+            onRetry={refetch}
+          />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col antialiased">
       {/* Spacer for fixed pill nav */}
@@ -66,13 +63,17 @@ export default function Home() {
           onSelectCategory={setSelectedCategory}
         />
 
-        <PropertyGrid
-          properties={filteredListings}
-          loading={loading}
-          title={getTitle()}
-          subtitle="Discover unique stays handpicked for you"
-          onClearFilters={handleClearFilters}
-        />
+        {loading ? (
+          <LoadingSpinner message="Loading properties..." />
+        ) : (
+          <PropertyGrid
+            properties={filteredListings}
+            loading={false}
+            title={getTitle()}
+            subtitle="Discover unique stays handpicked for you"
+            onClearFilters={handleClearFilters}
+          />
+        )}
 
         <HowItWorksSection
           steps={[

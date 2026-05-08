@@ -126,7 +126,7 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            className="input-base"
           />
         </div>
         <div>
@@ -136,7 +136,7 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
             min={checkIn || new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            className="input-base"
           />
         </div>
         <div>
@@ -144,7 +144,7 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
           <select 
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
-            className="w-full px-4 py-2.5 border border-border/60 rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            className="input-base"
           >
             {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
@@ -156,7 +156,7 @@ export function BookingCard({ propertyId, price, rating, reviews, maxGuests }: B
       </div>
 
       <Button 
-        className="w-full py-5 text-sm rounded-xl font-semibold" 
+        className="btn-base w-full py-3 px-4 rounded-xl font-semibold bg-primary text-primary-foreground hover:bg-primary/90" 
         onClick={handleReserve}
         disabled={bookingLoading || !checkIn || !checkOut}
       >

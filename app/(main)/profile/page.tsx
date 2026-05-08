@@ -7,6 +7,10 @@ import { toast } from "sonner";
 import { ProfileInfoCard } from "@/components/profile/profile-info-card";
 import { BookingsSection } from "@/components/profile/bookings-section";
 import { QuickActions } from "@/components/profile/quick-actions";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ErrorState } from "@/components/ui/error-state";
+import { useApi } from "@/hooks/use-api";
+import { api } from "@/lib/api-client";
 
 interface Booking {
   _id: string;
@@ -29,8 +33,8 @@ interface Booking {
 export default function ProfilePage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [bookingsLoading, setBookingsLoading] = useState(true);
+  const { data: bookingsData, loading: bookingsLoading, error, execute: fetchBookings } = useApi<{ bookings: Booking[] }>();
+  const bookings = bookingsData?.bookings || [];
 
   useEffect(() => {
     if (!loading && !user) {
@@ -40,24 +44,9 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      fetchBookings();
+      fetchBookings(api.get<{ bookings: Booking[] }>("/api/bookings"));
     }
-  }, [user]);
-
-  const fetchBookings = async () => {
-    try {
-      setBookingsLoading(true);
-      const response = await fetch("/api/bookings");
-      const data = await response.json();
-      if (data.success) {
-        setBookings(data.bookings);
-      }
-    } catch (error) {
-      console.error("Failed to fetch bookings:", error);
-    } finally {
-      setBookingsLoading(false);
-    }
-  };
+  }, [user, fetchBookings]);
 
   const handleLogout = async () => {
     try {
@@ -73,10 +62,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-lg text-muted-foreground">Loading profile...</p>
-        </div>
+        <LoadingSpinner message="Loading profile..." />
       </div>
     );
   }
@@ -102,11 +88,18 @@ export default function ProfilePage() {
           <ProfileInfoCard user={user} onLogout={handleLogout} />
 
           {/* Bookings Section */}
-          <BookingsSection
-            bookings={bookings}
-            loading={bookingsLoading}
-            onBrowseListings={() => router.push("/listings")}
-          />
+          {error ? (
+            <ErrorState 
+              message={error}
+              onRetry={() => fetchBookings(api.get<{ bookings: Booking[] }>("/api/bookings"))}
+            />
+          ) : (
+            <BookingsSection
+              bookings={bookings}
+              loading={bookingsLoading}
+              onBrowseListings={() => router.push("/listings")}
+            />
+          )}
 
           {/* Quick Actions */}
           <QuickActions

@@ -96,7 +96,7 @@ export function PropertyCard({
         </div>
 
         {/* Content */}
-        <div className={cn('p-4', !compact && 'p-5')}>
+        <div className={cn('p-4', !compact && 'p-6')}>
           {/* Title & Location */}
           <div className="mb-3">
             <h3 className="text-[0.95rem] font-semibold leading-snug line-clamp-1 text-foreground group-hover:text-primary transition-colors duration-200">

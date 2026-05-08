@@ -10,6 +10,9 @@ import { PropertyHeader } from "@/components/property/property-header";
 import { PropertyStats } from "@/components/property/property-stats";
 import { PropertyAmenities } from "@/components/property/property-amenities";
 import { BookingCard } from "@/components/property/booking-card";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useApi } from "@/hooks/use-api";
+import { api } from "@/lib/api-client";
 
 interface PropertyDetailPageProps {
   params: Promise<{
@@ -19,36 +22,26 @@ interface PropertyDetailPageProps {
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
   const { id } = use(params);
-  const [property, setProperty] = useState<Property | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: property, loading, error, execute } = useApi<Property>();
 
   useEffect(() => {
-    async function fetchProperty() {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/listings/${id}`);
-        const data = await response.json();
-        if (data.success) {
-          setProperty(data.data);
-        } else {
-          setProperty(null);
-        }
-      } catch (error) {
-        console.error('Failed to fetch property:', error);
-        setProperty(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProperty();
-  }, [id]);
+    execute(api.get<Property>(`/api/listings/${id}`));
+  }, [id, execute]);
 
-  if (loading) {
+  if (loading || (!property && !error)) {
+    return (
+      <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
+        <LoadingSpinner message="Loading property..." />
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-lg text-muted-foreground">Loading property...</p>
+          <p className="text-destructive mb-4">{error}</p>
+          <button onClick={() => execute(api.get<Property>(`/api/listings/${id}`))} className="btn-base px-4 py-2 bg-primary text-primary-foreground">Retry</button>
         </div>
       </div>
     );
