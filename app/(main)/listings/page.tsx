@@ -13,11 +13,16 @@ import { SearchBar } from "@/components/home/search-bar";
 
 function ListingsContent() {
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || "");
-  const [propertyType, setPropertyType] = useState<string>(searchParams.get('type') || (PROPERTY_TYPES[0] ?? "All Types"));
+  const [propertyType, setPropertyType] = useState<string>(PROPERTY_TYPES[0] ?? "All Types");
   const [priceRange, setPriceRange] = useState<string>(PRICE_RANGES[0] ?? "Price: Any");
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Get filters from URL params
+  const searchQuery = searchParams.get('search') || "";
+  const dateParam = searchParams.get('date') || "";
+  const guestsParam = searchParams.get('guests') || "";
+
   const debouncedQuery = useDebounce(searchQuery, UI.DEBOUNCE_DELAY_MS);
 
   // Fetch properties from API
@@ -42,7 +47,7 @@ function ListingsContent() {
   const filteredProperties = useMemo(() => {
     let filtered = [...properties];
 
-    // Apply search filter
+    // Apply search filter (location/destination)
     if (debouncedQuery.trim()) {
       const q = debouncedQuery.toLowerCase();
       filtered = filtered.filter((p) =>
@@ -50,6 +55,12 @@ function ListingsContent() {
         p.location.toLowerCase().includes(q) ||
         p.type.toLowerCase().includes(q)
       );
+    }
+
+    // Apply guests filter
+    if (guestsParam) {
+      const guestCount = Number(guestsParam);
+      filtered = filtered.filter((p) => p.guests >= guestCount);
     }
 
     // Apply type filter
@@ -73,7 +84,7 @@ function ListingsContent() {
     }
 
     return filtered;
-  }, [properties, debouncedQuery, propertyType, priceRange]);
+  }, [properties, debouncedQuery, guestsParam, propertyType, priceRange]);
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col">
@@ -116,14 +127,17 @@ function ListingsContent() {
           <Container>
             <Heading as="h2" className="mb-2">
             Available Properties ({filteredProperties.length})
-            {debouncedQuery && (
+            {(debouncedQuery || guestsParam || dateParam) && (
                 <span className="text-sm font-normal text-muted-foreground ml-2">
-                &mdash; showing results for &ldquo;{debouncedQuery}&rdquo;
+                &mdash; filtered results
               </span>
             )}
             </Heading>
             <Text muted className="mb-8">
-              Filter by destination, property type, and budget to find your best match.
+              {debouncedQuery && `Showing results for "${debouncedQuery}"`}
+              {guestsParam && ` • ${guestsParam} ${Number(guestsParam) === 1 ? 'guest' : 'guests'}`}
+              {dateParam && ` • ${new Date(dateParam).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+              {!debouncedQuery && !guestsParam && !dateParam && 'Filter by destination, property type, and budget to find your best match.'}
             </Text>
 
             {loading ? (
@@ -142,9 +156,9 @@ function ListingsContent() {
                 <p className="text-lg text-muted-foreground">No properties found matching your criteria.</p>
                 <button
                   onClick={() => {
-                    setSearchQuery("");
                     setPropertyType(PROPERTY_TYPES[0]);
                     setPriceRange(PRICE_RANGES[0]);
+                    window.location.href = '/listings';
                   }}
                   className="mt-4 text-primary hover:underline"
                 >
