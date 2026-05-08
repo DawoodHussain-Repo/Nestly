@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Archive } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Archive, Trash2 } from "lucide-react";
 import { MessageThread } from "@/components/message-thread";
-import { mockCurrentUser, mockMessages } from "@/lib/mock-data";
+import { mockCurrentUser, mockMessages, Message } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { MessagesSidebar } from "@/components/messages/messages-sidebar";
 import { ConversationList } from "@/components/messages/conversation-list";
+import { deduplicateBySender } from "@/lib/utils";
 
 type Tab = 'inbox' | 'archive' | 'requests';
 
@@ -15,20 +16,20 @@ export default function MessagesPage() {
   const [showThread, setShowThread] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('inbox');
   const [searchQuery, setSearchQuery] = useState("");
-  const [archivedIds, setArchivedIds] = useState<string[]>([]);
+  const [archivedSenderIds, setArchivedSenderIds] = useState<string[]>([]);
   const [readIds, setReadIds] = useState<string[]>([]);
-  const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const [deletedSenderIds, setDeletedSenderIds] = useState<string[]>([]);
   const [showOptions, setShowOptions] = useState<string | null>(null);
 
   // Filter messages based on tab and search
   const getFilteredMessages = () => {
-    let filtered = mockMessages.filter(msg => !deletedIds.includes(msg.id));
+    let filtered = mockMessages.filter(msg => !deletedSenderIds.includes(msg.senderId));
 
     // Apply tab filter
     if (activeTab === 'archive') {
-      filtered = filtered.filter(msg => archivedIds.includes(msg.id));
+      filtered = filtered.filter(msg => archivedSenderIds.includes(msg.senderId));
     } else if (activeTab === 'inbox') {
-      filtered = filtered.filter(msg => !archivedIds.includes(msg.id));
+      filtered = filtered.filter(msg => !archivedSenderIds.includes(msg.senderId));
     }
 
     // Apply search filter
@@ -50,6 +51,14 @@ export default function MessagesPage() {
   );
   const activeMessage = conversationList.find((message) => message.senderId === selectedConversation);
 
+  // Close thread if selected conversation is no longer available
+  useEffect(() => {
+    if (showThread && !conversationList.find(msg => msg.senderId === selectedConversation)) {
+      setShowThread(false);
+      setSelectedConversation("");
+    }
+  }, [conversationList, selectedConversation, showThread]);
+
   const handleSelectConversation = (senderId: string) => {
     setSelectedConversation(senderId);
     setShowThread(true);
@@ -68,32 +77,41 @@ export default function MessagesPage() {
     toast.success("All messages marked as read");
   };
 
-  const handleArchive = (id: string) => {
-    if (archivedIds.includes(id)) {
-      setArchivedIds(archivedIds.filter(aid => aid !== id));
+  const handleArchive = (senderId: string) => {
+    if (archivedSenderIds.includes(senderId)) {
+      setArchivedSenderIds(archivedSenderIds.filter(aid => aid !== senderId));
       toast.success("Conversation unarchived");
     } else {
-      setArchivedIds([...archivedIds, id]);
+      setArchivedSenderIds([...archivedSenderIds, senderId]);
       toast.success("Conversation archived");
+      
+      // Close thread if this is the selected conversation
+      if (selectedConversation === senderId) {
+        setShowThread(false);
+        setSelectedConversation("");
+      }
     }
     setShowOptions(null);
   };
 
-  const handleDelete = (id: string) => {
-    setDeletedIds([...deletedIds, id]);
+  const handleDelete = (senderId: string) => {
+    setDeletedSenderIds([...deletedSenderIds, senderId]);
     toast.success("Conversation deleted");
     setShowOptions(null);
-    if (selectedConversation === id) {
+    
+    // Close thread if this is the selected conversation
+    if (selectedConversation === senderId) {
       setShowThread(false);
+      setSelectedConversation("");
     }
   };
 
-  const handleMarkRead = (id: string) => {
-    if (readIds.includes(id)) {
-      setReadIds(readIds.filter(rid => rid !== id));
+  const handleMarkRead = (senderId: string) => {
+    if (readIds.includes(senderId)) {
+      setReadIds(readIds.filter(rid => rid !== senderId));
       toast.success("Marked as unread");
     } else {
-      setReadIds([...readIds, id]);
+      setReadIds([...readIds, senderId]);
       toast.success("Marked as read");
     }
     setShowOptions(null);
@@ -103,10 +121,26 @@ export default function MessagesPage() {
     toast.info("New chat feature coming soon!");
   };
 
-  const isRead = (id: string) => readIds.includes(id);
-  const isArchived = (id: string) => archivedIds.includes(id);
+  const isRead = (senderId: string) => readIds.includes(senderId);
+  const isArchived = (senderId: string) => archivedSenderIds.includes(senderId);
 
-  const unreadCount = conversationList.filter(msg => !readIds.includes(msg.senderId)).length;
+  // Calculate counts properly with deduplication
+  const inboxMessages = deduplicateBySender(
+    mockMessages.filter(msg => 
+      !deletedSenderIds.includes(msg.senderId) && 
+      !archivedSenderIds.includes(msg.senderId)
+    )
+  );
+  const archivedMessages = deduplicateBySender(
+    mockMessages.filter(msg => 
+      !deletedSenderIds.includes(msg.senderId) && 
+      archivedSenderIds.includes(msg.senderId)
+    )
+  );
+  
+  const unreadCount = activeTab === 'inbox' 
+    ? inboxMessages.filter(msg => !readIds.includes(msg.senderId)).length
+    : 0;
 
   return (
     <div className="bg-background text-foreground h-screen overflow-hidden flex">
@@ -117,7 +151,7 @@ export default function MessagesPage() {
         <MessagesSidebar
           activeTab={activeTab}
           unreadCount={unreadCount}
-          archivedCount={archivedIds.length}
+          archivedCount={archivedMessages.length}
           onTabChange={setActiveTab}
           onNewChat={handleNewChat}
         />
@@ -145,33 +179,56 @@ export default function MessagesPage() {
 
         {/* Message Thread - Shown on mobile when conversation is selected */}
         <main className={`flex-1 flex flex-col h-full bg-background ${showThread ? 'flex' : 'hidden md:flex'}`}>
-          <header className="px-5 py-4 border-b border-border bg-background flex items-center gap-3">
-            <button
-              onClick={handleBackToList}
-              className="md:hidden p-2 hover:bg-secondary rounded-full transition-colors"
-              aria-label="Back to conversations"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <div className="flex-1">
-              <h2 className="text-lg font-heading text-foreground">{activeMessage?.senderName ?? "Conversation"}</h2>
-              <p className="text-sm text-primary">{activeMessage?.propertyTitle ?? "No property selected"}</p>
+          {activeMessage ? (
+            <>
+              <header className="px-5 py-4 border-b border-border bg-background flex items-center gap-3 shadow-sm">
+                <button
+                  onClick={handleBackToList}
+                  className="md:hidden p-2 hover:bg-secondary rounded-full transition-colors"
+                  aria-label="Back to conversations"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-heading font-semibold text-foreground truncate">
+                    {activeMessage.senderName}
+                  </h2>
+                  <p className="text-sm text-primary truncate">{activeMessage.propertyTitle}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleArchive(activeMessage.senderId)}
+                    className="p-2 hover:bg-secondary rounded-full transition-colors"
+                    title={isArchived(activeMessage.senderId) ? "Unarchive" : "Archive"}
+                  >
+                    <Archive className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(activeMessage.senderId)}
+                    className="p-2 hover:bg-destructive/10 text-destructive rounded-full transition-colors"
+                    title="Delete conversation"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
+              </header>
+              <div className="flex-1 min-h-0">
+                <MessageThread messages={selectedMessages} currentUserId={mockCurrentUser.id} />
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center max-w-sm px-6">
+                <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4">
+                  <Archive className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-heading font-semibold mb-2">No conversation selected</h3>
+                <p className="text-sm text-muted-foreground">
+                  Select a conversation from the list to view messages
+                </p>
+              </div>
             </div>
-            <button
-              onClick={() => {
-                if (activeMessage) {
-                  handleArchive(activeMessage.id);
-                }
-              }}
-              className="p-2 hover:bg-secondary rounded-full transition-colors"
-              title={activeMessage && isArchived(activeMessage.id) ? "Unarchive" : "Archive"}
-            >
-              <Archive className="h-5 w-5" />
-            </button>
-          </header>
-          <div className="flex-1 min-h-0">
-            <MessageThread messages={selectedMessages} currentUserId={mockCurrentUser.id} />
-          </div>
+          )}
         </main>
       </div>
     </div>

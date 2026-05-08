@@ -12,7 +12,6 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { useProperties } from "@/hooks/use-api";
-import { Search } from "lucide-react";
 
 function ListingsContent() {
   const searchParams = useSearchParams();
@@ -95,7 +94,12 @@ function ListingsContent() {
             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-6 text-center">
               Find your perfect stay
             </h1>
-            <SearchBar variant="compact" />
+            <SearchBar 
+              variant="compact"
+              initialSearch={searchQuery}
+              initialDate={dateParam}
+              initialGuests={guestsParam}
+            />
           </Container>
         </section>
 
@@ -149,7 +153,6 @@ function ListingsContent() {
               </div>
             ) : (
               <EmptyState
-                icon={Search}
                 title="No properties found"
                 message="Try adjusting your search or filters"
                 actionLabel="Clear all filters"

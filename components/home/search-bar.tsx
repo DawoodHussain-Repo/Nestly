@@ -30,20 +30,48 @@ const popularDestinations = [
 interface SearchBarProps {
   /** Where to display. Both variants render identically — only max-width/margin differ. */
   variant?: 'hero' | 'compact';
+  /** Initial search query from URL params */
+  initialSearch?: string;
+  /** Initial date from URL params */
+  initialDate?: string;
+  /** Initial guests from URL params */
+  initialGuests?: string;
 }
 
-export function SearchBar({ variant = 'hero' }: SearchBarProps) {
+export function SearchBar({ 
+  variant = 'hero',
+  initialSearch = "",
+  initialDate = "",
+  initialGuests = ""
+}: SearchBarProps) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [guests, setGuests] = useState(1);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    initialDate ? new Date(initialDate) : null
+  );
+  const [guests, setGuests] = useState(
+    initialGuests ? Number(initialGuests) : 1
+  );
   
   const locationRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
   const guestsRef = useRef<HTMLDivElement>(null);
+
+  // Update state when URL params change
+  useEffect(() => {
+    setSearchQuery(initialSearch);
+  }, [initialSearch]);
+
+  useEffect(() => {
+    setSelectedDate(initialDate ? new Date(initialDate) : null);
+  }, [initialDate]);
+
+  useEffect(() => {
+    setGuests(initialGuests ? Number(initialGuests) : 1);
+  }, [initialGuests]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

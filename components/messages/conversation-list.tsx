@@ -2,6 +2,7 @@ import { Search, CheckCheck, Archive, MoreVertical, Check, Trash2 } from "lucide
 import { Input } from "@/components/ui/input";
 import { MessageListItem } from "@/components/message-list-item";
 import { Message } from "@/lib/mock-data";
+import { deduplicateBySender } from "@/lib/utils";
 
 interface ConversationListProps {
   conversations: Message[];
@@ -19,28 +20,6 @@ interface ConversationListProps {
   onDelete: (id: string) => void;
   isRead: (id: string) => boolean;
   isArchived: (id: string) => boolean;
-}
-
-/**
- * Deduplicate messages by senderId — keep only the latest message per unique sender.
- * This prevents the same user from appearing multiple times in the conversation list.
- */
-function deduplicateBySender(messages: Message[]): Message[] {
-  const seen = new Map<string, Message>();
-
-  // Sort by timestamp descending so we keep the most recent message per sender
-  const sorted = [...messages].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-
-  for (const msg of sorted) {
-    if (!seen.has(msg.senderId)) {
-      seen.set(msg.senderId, msg);
-    }
-  }
-
-  // Return in the same order (most recent first)
-  return Array.from(seen.values());
 }
 
 export function ConversationList({
@@ -145,14 +124,14 @@ export function ConversationList({
                     )}
                   </button>
                   <button
-                    onClick={() => onArchive(conversation.id)}
+                    onClick={() => onArchive(conversation.senderId)}
                     className="w-full px-4 py-2 text-left hover:bg-secondary transition-colors flex items-center gap-2 text-sm"
                   >
                     <Archive className="h-4 w-4" />
-                    {isArchived(conversation.id) ? 'Unarchive' : 'Archive'}
+                    {isArchived(conversation.senderId) ? 'Unarchive' : 'Archive'}
                   </button>
                   <button
-                    onClick={() => onDelete(conversation.id)}
+                    onClick={() => onDelete(conversation.senderId)}
                     className="w-full px-4 py-2 text-left hover:bg-destructive/10 text-destructive transition-colors flex items-center gap-2 text-sm"
                   >
                     <Trash2 className="h-4 w-4" />
